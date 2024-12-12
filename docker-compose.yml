@@ -1,0 +1,57 @@
+version: '3'
+services:
+  # PostgreSQL with PostGIS
+  db:
+    #image: postgis/postgis:16-3.4
+    image: kartoza/postgis
+    container_name: postgres-postgis
+    environment:
+      POSTGRES_DB: jobfinder
+      POSTGRES_USER: job123
+      POSTGRES_PASSWORD: job123
+    ports:
+      - "15432:5432"
+    networks:
+      - pg-network
+    volumes:
+      - /home/synapios/ilisilab/pg-data:/var/lib/postgresql/data
+
+  # PGAdmin4
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ilisi@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: ilisip
+    ports:
+      - "15050:80"
+    depends_on:
+      - db
+    networks:
+      - pg-network
+    volumes:
+      - /home/synapios/ilisilab/pgadmi-data:/var/lib/pgadmin4/ilisi@gmail.com
+  
+#  # QGIS Desktop (Optional - for development purposes)
+#  qgis:
+#    image: qgis/qgis:latest
+#    container_name: qgis
+#    environment:
+#      DISPLAY: ${DISPLAY:-""}
+#      XAUTHORITY: ${XAUTH:-""}
+#      XDG_RUNTIME_DIR: /tmp
+#      QT_X11_NO_MITSHM: 1
+#    volumes:
+#      - /tmp/.X11-unix:/tmp/.X11-unix
+#      - /home/synapios/ilisilab/qgis-data:/root
+#    networks:
+#      - pg-network
+#    ports:
+#      - "5900:5900"
+
+
+networks:
+  pg-network:
+
+#volumes:
+#  pg-data:
