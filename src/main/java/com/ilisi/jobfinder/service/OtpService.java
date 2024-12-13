@@ -2,6 +2,7 @@ package com.ilisi.jobfinder.service;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import lombok.AllArgsConstructor;
 import org.jboss.aerogear.security.otp.Totp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -16,17 +17,12 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
 import java.time.Duration;
 
 @Service
+@AllArgsConstructor
 public class OtpService {
-
-    @Autowired
-    private JavaMailSender mailSender;
-
-    @Autowired
-    private StringRedisTemplate redisTemplate;
-
     private static final String SECRET = "S3CR3T";
     private static final int OTP_EXPIRATION_MINUTES = 1; // durée d'expiration en minutes
-    @Autowired
+    private JavaMailSender mailSender;
+    private StringRedisTemplate redisTemplate;
     private SpringTemplateEngine templateEngine;
 
     public String generateAndStoreOtp(String email) {
