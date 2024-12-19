@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class CandidatService {
     private final UserService userService;
-    public PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     public User registerCandidat(RegisterCandidatRequest candidatRequest) throws EmailAlreadyExists {
         if (userService.getUserByEmail(candidatRequest.getEmail()).isPresent()) {
