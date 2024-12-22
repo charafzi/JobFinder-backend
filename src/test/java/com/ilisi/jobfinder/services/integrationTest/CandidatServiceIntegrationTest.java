@@ -17,8 +17,6 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.util.Optional;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -61,7 +59,7 @@ public class CandidatServiceIntegrationTest {
         candidat.setPassword("123456789");
         candidat.setRole(Role.CANDIDAT);
 
-        User savedUser = userService.createUser(candidat);
+        User savedUser = userService.saveUser(candidat);
 
         assertThat(savedUser).isNotNull();
         assertThat(savedUser.getEmail()).isEqualTo(candidat.getEmail());
