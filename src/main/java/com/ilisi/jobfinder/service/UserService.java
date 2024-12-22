@@ -1,11 +1,7 @@
 package com.ilisi.jobfinder.service;
-import com.ilisi.jobfinder.dto.LoginRequest;
 import com.ilisi.jobfinder.model.User;
 import com.ilisi.jobfinder.repository.UserRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,7 +12,7 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository repo;
 
-    public User createUser(User user){
+    public User saveUser(User user){
         return repo.save(user);
     }
     public Optional<User> getUserByEmail(String email){
