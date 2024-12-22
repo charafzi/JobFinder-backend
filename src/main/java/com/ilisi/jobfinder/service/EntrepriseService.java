@@ -2,24 +2,23 @@ package com.ilisi.jobfinder.service;
 
 
 import com.ilisi.jobfinder.Enum.Role;
-import com.ilisi.jobfinder.dto.EntrepriseRequest;
+import com.ilisi.jobfinder.dto.RegisterEntrepriseRequest;
+import com.ilisi.jobfinder.exceptions.EmailAlreadyExists;
 import com.ilisi.jobfinder.model.Entreprise;
 import com.ilisi.jobfinder.model.User;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+@AllArgsConstructor
 public class EntrepriseService {
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    public User registerEntreprise(EntrepriseRequest entrepriseRequest) {
+    public User registerEntreprise(RegisterEntrepriseRequest entrepriseRequest) throws EmailAlreadyExists{
         if (userService.getUserByEmail(entrepriseRequest.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("Email already exists");
+            throw new EmailAlreadyExists("Email already exists");
         }
         Entreprise entreprise = new Entreprise();
         entreprise.setEmail(entrepriseRequest.getEmail());

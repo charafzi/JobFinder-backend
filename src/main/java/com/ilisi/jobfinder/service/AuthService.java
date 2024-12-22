@@ -1,18 +1,18 @@
 package com.ilisi.jobfinder.service;
 
-
 import com.ilisi.jobfinder.controller.AuthController;
 import com.ilisi.jobfinder.dto.*;
+import com.ilisi.jobfinder.exceptions.EmailAlreadyExists;
 import com.ilisi.jobfinder.model.User;
+import com.ilisi.jobfinder.repository.UserRepository;
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,30 +20,31 @@ import java.util.Optional;
 
 
 @Service
+@AllArgsConstructor
 public class AuthService {
-    @Autowired
-    public PasswordEncoder passwordEncoder;
-    @Autowired
-    private AuthenticationManager authenticationManager;
-    @Autowired
-    private JwtService jwtService;
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private CandidatService candidatService;
-    @Autowired
-    private EntrepriseService entrepriseService;
+
+    private final UserRepository userRepository;
+    private final  PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
+    private final UserService userService;
+    private final CandidatService candidatService;
+    private final EntrepriseService entrepriseService;
     private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 
+    /*public String generateToken(String email){
+        return jwtService.generateToken(email);
+    }*/
 
     public void validateToken(String token) {
         try {
             String email = jwtService.extractEmail(token);
             Optional<User> user = userService.getUserByEmail(email);
             if (user.isPresent()) {
-                jwtService.validateToken(token, email);
+                jwtService.validateToken(token);
             }
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
     public boolean emailExists(String email) {
@@ -77,8 +78,18 @@ public class AuthService {
         return passwordEncoder.matches(loginRequest.getPassword(), user.getPassword());
     }
 
-    public UserDTO authenticate(LoginRequest loginRequest) throws UsernameNotFoundException, BadCredentialsException {
-        log.info("Tentative de connexion pour l'utilisateur : {}", loginRequest.getEmail());
+
+    public LoginResponse authenticate(LoginRequest loginRequest) throws UsernameNotFoundException, BadCredentialsException {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
+        );
+        User user = userRepository.findByEmail(loginRequest.getEmail()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        String jwtToken = jwtService.generateToken(user);
+        return LoginResponse.builder().token(jwtToken).build();
+
+        // Return the user details in DTO form
+        /*log.info("Tentative de connexion pour l'utilisateur : {}", loginRequest.getEmail());
+>>>>>>> develop
 
         Optional<User> userOptional = userService.getUserByEmail(loginRequest.getEmail());
         if (userOptional.isEmpty()) {
@@ -112,27 +123,27 @@ public class AuthService {
 
             log.info("Authentification réussie pour : {}", loginRequest.getEmail());
 
-            // Retourner le UserDTO
-            User user = userOptional.get();
-            return UserDTO.builder()
-                    .id(user.getId())
-                    .email(user.getEmail())
-                    .token(jwtService.generateToken(authentication.getName()))
-                    .role(user.getRole())
-                    .build();
+                // Retourner le UserDTO
+                User user = userOptional.get();
+                return UserDTO.builder()
+                        .id(user.getId())
+                        .email(user.getEmail())
+                        .token(jwtService.generateToken(authentication.getName()))
+                        .role(user.getRole())
+                        .build();
 
         } catch (AuthenticationException ex) {
             // Log l'erreur et lance une exception pour les échecs d'authentification
             log.error("Échec de l'authentification pour l'utilisateur : {}", loginRequest.getEmail(), ex);
             throw new BadCredentialsException("Invalid username or password", ex);
-        }
+        }*/
     }
 
 
-    public User registerCandidat(CandidatRequest candidatRequest) {
+    public User registerCandidat(RegisterCandidatRequest candidatRequest) throws EmailAlreadyExists {
         return candidatService.registerCandidat(candidatRequest);
     }
-    public User registerEntreprise(EntrepriseRequest entrepriseRequest) {
+    public User registerEntreprise(RegisterEntrepriseRequest entrepriseRequest) throws EmailAlreadyExists{
         return entrepriseService.registerEntreprise(entrepriseRequest);
     }
 
