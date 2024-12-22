@@ -1,13 +1,14 @@
 package com.ilisi.jobfinder.controller;
 
 import com.ilisi.jobfinder.dto.*;
-//import com.ilisi.jobfinder.service.OtpService;
+import com.ilisi.jobfinder.exceptions.EmailAlreadyExists;
+import com.ilisi.jobfinder.service.OtpService;
 import com.ilisi.jobfinder.service.AuthService;
-import jakarta.mail.MessagingException;
 import lombok.AllArgsConstructor;
+import lombok.extern.java.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
@@ -19,17 +20,16 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/auth")
 public class AuthController {
     private AuthService authService;
-//    private OtpService otpService;
-
+    private OtpService otpService;
     private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 
     @PostMapping("/login")
-    public ResponseEntity<UserDTO> login(@RequestBody LoginRequest loginRequest){
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest){
         System.out.println("Tentative de connexion avec : " + loginRequest.getEmail());
         try{
-            UserDTO user=authService.authenticate(loginRequest);
-            log.info("Authentification user :{} "+loginRequest.getEmail());
-            return ResponseEntity.ok(user);
+            LoginResponse loginResponse =authService.authenticate(loginRequest);
+            //log.info("Authentification user :{} "+loginRequest.getEmail());
+            return ResponseEntity.ok(loginResponse);
         } catch (UsernameNotFoundException e) {
             return ResponseEntity.status(404).body(null); //invalid email
         } catch (BadCredentialsException e) {
@@ -45,13 +45,21 @@ public class AuthController {
     }
 
     @PostMapping("/registerCandidat")
-    public ResponseEntity<?> registerCandidat(@RequestBody CandidatRequest candidatRequest) {
-        authService.registerCandidat(candidatRequest);
+    public ResponseEntity<?> registerCandidat(@RequestBody RegisterCandidatRequest candidatRequest) {
+        try {
+            authService.registerCandidat(candidatRequest);
+        } catch (EmailAlreadyExists e) {
+            return ResponseEntity.badRequest().body("Email already exists");
+        }
         return ResponseEntity.ok("Candidat enregistré avec succès !");
     }
    @PostMapping("/registerEntreprise")
-   public ResponseEntity<?> registerEntreprise(@RequestBody EntrepriseRequest entrepriseRequest) {
-       authService.registerEntreprise(entrepriseRequest);
+   public ResponseEntity<?> registerEntreprise(@RequestBody RegisterEntrepriseRequest entrepriseRequest) {
+       try {
+           authService.registerEntreprise(entrepriseRequest);
+       } catch (EmailAlreadyExists e) {
+           return ResponseEntity.badRequest().body("Email already exists");
+       }
        return ResponseEntity.ok("Entreprise enregistré avec succès !");
    }
 
