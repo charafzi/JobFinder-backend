@@ -29,7 +29,7 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/auth/**").permitAll() // Autoriser l'accès public/anonyme
+                        .requestMatchers("/api/auth/login","/api/auth/registerCandidat","/api/auth/registerEntreprise").permitAll() // Autoriser l'accès public/anonyme
                         .requestMatchers("/oauth2/**").permitAll() // Autoriser l'accès anonyme pour OAuth2 et login
                         .anyRequest().authenticated() // Authentification requise pour toutes les autres requêtes
                 )
@@ -46,8 +46,8 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
+}
   /*  @Bean
     public UserDetailsService userDetailsService() {
         return new CustomUserDetailsService();
     }*/
-}

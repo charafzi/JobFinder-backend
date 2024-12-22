@@ -1,7 +1,7 @@
 package com.ilisi.jobfinder.controller;
 
 import com.ilisi.jobfinder.dto.*;
-import com.ilisi.jobfinder.service.OtpService;
+//import com.ilisi.jobfinder.service.OtpService;
 import com.ilisi.jobfinder.service.AuthService;
 import jakarta.mail.MessagingException;
 import lombok.AllArgsConstructor;
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/auth")
 public class AuthController {
     private AuthService authService;
-    private OtpService otpService;
+//    private OtpService otpService;
 
     private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 

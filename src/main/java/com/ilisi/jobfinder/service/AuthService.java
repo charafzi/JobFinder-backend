@@ -1,12 +1,9 @@
 package com.ilisi.jobfinder.service;
 
-import com.ilisi.jobfinder.Enum.Role;
+
 import com.ilisi.jobfinder.controller.AuthController;
 import com.ilisi.jobfinder.dto.*;
-import com.ilisi.jobfinder.model.Candidat;
-import com.ilisi.jobfinder.model.Entreprise;
 import com.ilisi.jobfinder.model.User;
-import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +16,11 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.util.Optional;
 
 
 @Service
 public class AuthService {
-    @Getter
     @Autowired
     public PasswordEncoder passwordEncoder;
     @Autowired
@@ -36,14 +31,10 @@ public class AuthService {
     private UserService userService;
     @Autowired
     private CandidatService candidatService;
-
     @Autowired
     private EntrepriseService entrepriseService;
     private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 
-    public String generateToken(String email){
-        return jwtService.generateToken(email);
-    }
 
     public void validateToken(String token) {
         try {
@@ -75,17 +66,17 @@ public class AuthService {
             user.setPassword(passwordEncoder.encode(loginRequest.getPassword()));
             userService.createUser(user);
             return user;
-        }
-        else{
+        }else{
             return null;
         }
     }
-    public boolean verifyUser(LoginRequest loginRequest){
-        User user=userService.getUserByEmail(loginRequest.getEmail())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + loginRequest.getEmail()));
-        // Check if the password matches the encoded password in the database
+    public boolean verifyUser(LoginRequest loginRequest) {
+        User user = userService.getUserByEmail(loginRequest.getEmail())
+                .orElseThrow(() -> new UsernameNotFoundException("Utilisateur introuvable"));
+        // Vérification du mot de passe
         return passwordEncoder.matches(loginRequest.getPassword(), user.getPassword());
     }
+
     public UserDTO authenticate(LoginRequest loginRequest) throws UsernameNotFoundException, BadCredentialsException {
         log.info("Tentative de connexion pour l'utilisateur : {}", loginRequest.getEmail());
 
