@@ -3,6 +3,8 @@ package com.ilisi.jobfinder.service;
 import com.ilisi.jobfinder.controller.AuthController;
 import com.ilisi.jobfinder.dto.*;
 import com.ilisi.jobfinder.exceptions.EmailAlreadyExists;
+import com.ilisi.jobfinder.exceptions.EmailNotExist;
+import com.ilisi.jobfinder.exceptions.SamePasswordException;
 import com.ilisi.jobfinder.model.User;
 import com.ilisi.jobfinder.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -32,10 +34,6 @@ public class AuthService {
     private final EntrepriseService entrepriseService;
     private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 
-    /*public String generateToken(String email){
-        return jwtService.generateToken(email);
-    }*/
-
     public void validateToken(String token) {
         try {
             String email = jwtService.extractEmail(token);
@@ -53,24 +51,25 @@ public class AuthService {
     }
     public User saveUser(User user){
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userService.createUser(user);
+        return userService.saveUser(user);
     }
     public ResponseEntity<Iterable<User>> getAllUsers(){
       return (ResponseEntity<Iterable<User>>) userService.getAllUsers();
     }
 
-    public User updatePassword(LoginRequest loginRequest){
-        User user = null;
-        Optional<User> userOptional = userService.getUserByEmail(loginRequest.getEmail());
+    public User updatePassword(ResetPasswordRequest resetPasswordRequest) throws EmailNotExist, SamePasswordException {
+        Optional<User> userOptional = userService.getUserByEmail(resetPasswordRequest.getEmail());
         if(userOptional.isPresent()){
-            user = userOptional.get();
-            user.setPassword(passwordEncoder.encode(loginRequest.getPassword()));
-            userService.createUser(user);
+            User user = userOptional.get();
+            if(passwordEncoder.matches(resetPasswordRequest.getNewPassword(),user.getPassword()))
+                throw new SamePasswordException("Old password matches new password");
+            else{
+                user.setPassword(passwordEncoder.encode(resetPasswordRequest.getNewPassword()));
+                userService.saveUser(user);
+            }
             return user;
-        }
-        else{
-            return null;
-        }
+        }else
+            throw new EmailNotExist("No user with email = "+resetPasswordRequest.getEmail());
     }
     public boolean verifyUser(LoginRequest loginRequest){
         User user=userService.getUserByEmail(loginRequest.getEmail())
@@ -86,56 +85,6 @@ public class AuthService {
         User user = userRepository.findByEmail(loginRequest.getEmail()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
         String jwtToken = jwtService.generateToken(user);
         return LoginResponse.builder().token(jwtToken).build();
-
-        // Return the user details in DTO form
-        /*log.info("Tentative de connexion pour l'utilisateur : {}", loginRequest.getEmail());
-
-        Optional<User> userOptional = userService.getUserByEmail(loginRequest.getEmail());
-        if (userOptional.isEmpty()) {
-            log.error("Utilisateur non trouvé : {}", loginRequest.getEmail());
-            throw new UsernameNotFoundException("User not found: " + loginRequest.getEmail());
-        }
-
-        log.info("Utilisateur trouvé : {}", loginRequest.getEmail());
-
-        // Vérification de l'utilisateur et du mot de passe
-        if (!verifyUser(loginRequest)) {
-            log.error("Email ou mot de passe invalide pour l'utilisateur : {}", loginRequest.getEmail());
-            throw new BadCredentialsException("Invalid email or password");
-        }
-
-        log.info("Authentification en cours pour : {}", loginRequest.getEmail());
-
-        try {
-            // Authentification de l'utilisateur avec Spring Security
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            loginRequest.getEmail(),
-                            loginRequest.getPassword())
-            );
-
-            // Vérification de l'authentification
-            if (authentication == null || !authentication.isAuthenticated()) {
-                log.error("Authentification échouée pour l'utilisateur : {}", loginRequest.getEmail());
-                throw new BadCredentialsException("Invalid username or password");
-            }
-
-            log.info("Authentification réussie pour : {}", loginRequest.getEmail());
-
-                // Retourner le UserDTO
-                User user = userOptional.get();
-                return UserDTO.builder()
-                        .id(user.getId())
-                        .email(user.getEmail())
-                        .token(jwtService.generateToken(authentication.getName()))
-                        .role(user.getRole())
-                        .build();
-
-        } catch (AuthenticationException ex) {
-            // Log l'erreur et lance une exception pour les échecs d'authentification
-            log.error("Échec de l'authentification pour l'utilisateur : {}", loginRequest.getEmail(), ex);
-            throw new BadCredentialsException("Invalid username or password", ex);
-        }*/
     }
 
 
