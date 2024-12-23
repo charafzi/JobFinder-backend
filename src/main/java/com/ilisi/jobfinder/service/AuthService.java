@@ -1,8 +1,11 @@
 package com.ilisi.jobfinder.service;
 
+import com.ilisi.jobfinder.Enum.Role;
 import com.ilisi.jobfinder.controller.AuthController;
 import com.ilisi.jobfinder.dto.*;
 import com.ilisi.jobfinder.exceptions.EmailAlreadyExists;
+import com.ilisi.jobfinder.model.Candidat;
+import com.ilisi.jobfinder.model.Entreprise;
 import com.ilisi.jobfinder.model.User;
 import com.ilisi.jobfinder.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -32,9 +35,9 @@ public class AuthService {
     private final EntrepriseService entrepriseService;
     private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 
-    /*public String generateToken(String email){
-        return jwtService.generateToken(email);
-    }*/
+//    public String generateToken(String email){
+//        return jwtService.generateToken(email);
+//    }
 
     public void validateToken(String token) {
         try {
@@ -84,59 +87,8 @@ public class AuthService {
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
         );
         User user = userRepository.findByEmail(loginRequest.getEmail()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        String jwtToken = jwtService.generateToken(user);
+        String jwtToken = jwtService.generateToken(user.getEmail());
         return LoginResponse.builder().token(jwtToken).build();
-
-        // Return the user details in DTO form
-        /*log.info("Tentative de connexion pour l'utilisateur : {}", loginRequest.getEmail());
->>>>>>> develop
-
-        Optional<User> userOptional = userService.getUserByEmail(loginRequest.getEmail());
-        if (userOptional.isEmpty()) {
-            log.error("Utilisateur non trouvé : {}", loginRequest.getEmail());
-            throw new UsernameNotFoundException("User not found: " + loginRequest.getEmail());
-        }
-
-        log.info("Utilisateur trouvé : {}", loginRequest.getEmail());
-
-        // Vérification de l'utilisateur et du mot de passe
-        if (!verifyUser(loginRequest)) {
-            log.error("Email ou mot de passe invalide pour l'utilisateur : {}", loginRequest.getEmail());
-            throw new BadCredentialsException("Invalid email or password");
-        }
-
-        log.info("Authentification en cours pour : {}", loginRequest.getEmail());
-
-        try {
-            // Authentification de l'utilisateur avec Spring Security
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            loginRequest.getEmail(),
-                            loginRequest.getPassword())
-            );
-
-            // Vérification de l'authentification
-            if (authentication == null || !authentication.isAuthenticated()) {
-                log.error("Authentification échouée pour l'utilisateur : {}", loginRequest.getEmail());
-                throw new BadCredentialsException("Invalid username or password");
-            }
-
-            log.info("Authentification réussie pour : {}", loginRequest.getEmail());
-
-                // Retourner le UserDTO
-                User user = userOptional.get();
-                return UserDTO.builder()
-                        .id(user.getId())
-                        .email(user.getEmail())
-                        .token(jwtService.generateToken(authentication.getName()))
-                        .role(user.getRole())
-                        .build();
-
-        } catch (AuthenticationException ex) {
-            // Log l'erreur et lance une exception pour les échecs d'authentification
-            log.error("Échec de l'authentification pour l'utilisateur : {}", loginRequest.getEmail(), ex);
-            throw new BadCredentialsException("Invalid username or password", ex);
-        }*/
     }
 
 
@@ -164,25 +116,7 @@ public class AuthService {
 //            user = userOpt.get();
 //        } else {
 //            // Si l'utilisateur n'existe pas, en créer un nouveau
-//            if (auth0Request.getRole() == Role.ENTREPRISE) {
-//                // Si l'utilisateur est une entreprise
-//                user = Entreprise.builder()
-//                        .googleId(auth0Request.getSub())
-//                        .email(auth0Request.getEmail())
-//                        .fullName(auth0Request.getName()) // Spécifique à Entreprise
-//                        .profilePicture(auth0Request.getPicture())
-//                        .role(Role.ENTREPRISE)
-//                        .build();
-//            } else {
-//                // Si l'utilisateur est un candidat
-//                user = Candidat.builder()
-//                        .googleId(auth0Request.getSub())
-//                        .email(auth0Request.getEmail())
-//                        .fullName(auth0Request.getName()) // Spécifique à Candidat
-//                        .profilePicture(auth0Request.getPicture())
-//                        .role(Role.CANDIDAT)
-//                        .build();
-//            }
+//            user = auth0Request.toUser();  // Utilisation de la méthode toUser() pour créer l'utilisateur
 //
 //            // Sauvegarder l'utilisateur
 //            user = userService.createUser(user);
@@ -201,7 +135,6 @@ public class AuthService {
 //                .role(user.getRole())
 //                .build();
 //    }
-
 
 
 
