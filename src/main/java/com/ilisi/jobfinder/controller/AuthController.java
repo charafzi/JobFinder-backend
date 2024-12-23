@@ -7,6 +7,8 @@ import com.ilisi.jobfinder.exceptions.SamePasswordException;
 import com.ilisi.jobfinder.model.User;
 import com.ilisi.jobfinder.service.OtpService;
 import com.ilisi.jobfinder.service.AuthService;
+import jakarta.mail.MessagingException;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +18,8 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
+
+
 
 @RestController
 @AllArgsConstructor
@@ -66,6 +70,19 @@ public class AuthController {
        return ResponseEntity.ok("Entreprise enregistré avec succès !");
    }
 
+    @PostMapping("/send-otp")
+    public void sendOtp(@RequestParam String email) throws MessagingException {
+        String otp = otpService.generateAndStoreOtp(email); // Générer et stocker l'OTP
+        otpService.sendOtpEmail(email, otp);
+        otpService.SaveOtpforUser(email, otp);// Envoyer l'OTP par email
+    }
+    // Endpoint pour valider l'OTP
+    @PostMapping("/validate-otp")
+    public boolean validateOtp(@RequestParam String email, @RequestParam String otp)
+    {
+        String storedotp=otpService.getOtpForUser(email);
+        return otp.equals(storedotp);
+    }
    @PostMapping("/resetPassword")
     public ResponseEntity<?> updatePassword(@RequestBody ResetPasswordRequest resetPasswordRequest){
        try {
@@ -96,9 +113,16 @@ public class AuthController {
 //        return otp.equals(storedotp);
 //    }
 //    @PostMapping("/authenticateWithGoogle")
-//    public ResponseEntity<UserDTO> authenticateWithGoogle(@RequestBody Auth0Request auth0Request) {
-//        return ResponseEntity.ok(authService.authenticateWithGoogle(auth0Request));
+//    public ResponseEntity<?> authenticateWithGoogle(@RequestBody @Valid Auth0Request auth0Request) {
+//        try {
+//            UserDTO userDTO = authService.authenticateWithGoogle(auth0Request);
+//            return ResponseEntity.ok(userDTO);
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body("Erreur lors de l'authentification avec Google : " + e.getMessage());
+//        }
 //    }
+
 
 
 

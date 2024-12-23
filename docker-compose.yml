@@ -1,4 +1,5 @@
 version: '3'
+
 services:
   # PostgreSQL with PostGIS
   db:
@@ -31,27 +32,46 @@ services:
       - pg-network
     volumes:
       - /home/synapios/ilisilab/pgadmi-data:/var/lib/pgadmin4/ilisi@gmail.com
-  
-#  # QGIS Desktop (Optional - for development purposes)
-#  qgis:
-#    image: qgis/qgis:latest
-#    container_name: qgis
-#    environment:
-#      DISPLAY: ${DISPLAY:-""}
-#      XAUTHORITY: ${XAUTH:-""}
-#      XDG_RUNTIME_DIR: /tmp
-#      QT_X11_NO_MITSHM: 1
-#    volumes:
-#      - /tmp/.X11-unix:/tmp/.X11-unix
-#      - /home/synapios/ilisilab/qgis-data:/root
-#    networks:
-#      - pg-network
-#    ports:
-#      - "5900:5900"
 
+  # Redis
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - pg-network
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Application Spring Boot
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: jobfinder
+    ports:
+      - "8092:8091"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/jobfinder
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+    depends_on:
+      - db
+      - redis
+    networks:
+      - pg-network
 
 networks:
   pg-network:
+    driver: bridge
 
 #volumes:
 #  pg-data:
+#  pgadmin-data:
+#  redis-data:
