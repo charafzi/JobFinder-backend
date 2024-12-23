@@ -3,7 +3,10 @@ package com.ilisi.jobfinder.services.unitTest;
 import com.ilisi.jobfinder.dto.LoginRequest;
 import com.ilisi.jobfinder.dto.LoginResponse;
 import com.ilisi.jobfinder.dto.RegisterCandidatRequest;
+import com.ilisi.jobfinder.dto.ResetPasswordRequest;
 import com.ilisi.jobfinder.exceptions.EmailAlreadyExists;
+import com.ilisi.jobfinder.exceptions.EmailNotExist;
+import com.ilisi.jobfinder.exceptions.SamePasswordException;
 import com.ilisi.jobfinder.model.User;
 import com.ilisi.jobfinder.repository.UserRepository;
 import com.ilisi.jobfinder.service.*;
@@ -169,4 +172,71 @@ class AuthServiceUnitTest {
         // Assert
         assertFalse(isValid);
     }
+
+    @Test
+    void updatePassword_shouldUpdatePassword_whenUserExistsAndNewPasswordIsDifferent() {
+        // Arrange
+        ResetPasswordRequest request = ResetPasswordRequest.builder()
+                .email("test@example.com")
+                .newPassword("newPassword")
+                .build();
+
+        User user = new User();
+        user.setEmail("test@example.com");
+        user.setPassword("oldEncodedPassword");
+
+        when(userService.getUserByEmail("test@example.com"))
+                .thenReturn(Optional.of(user));
+
+        when(passwordEncoder.matches("newPassword", "oldEncodedPassword"))
+                .thenReturn(false);
+
+        when(passwordEncoder.encode("newPassword"))
+                .thenReturn("newEncodedPassword");
+
+        // Act
+        User updatedUser = authService.updatePassword(request);
+
+        // Assert
+        assertEquals("newEncodedPassword", updatedUser.getPassword());
+        verify(userService).saveUser(updatedUser);
+    }
+
+    @Test
+    void updatePassword_shouldThrowEmailNotExist_whenUserDoesNotExist() {
+        // Arrange
+        ResetPasswordRequest request = ResetPasswordRequest.builder()
+                .email("test@example.com")
+                .newPassword("newPassword")
+                .build();
+
+        when(userService.getUserByEmail("test@example.com"))
+                .thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(EmailNotExist.class, () -> authService.updatePassword(request));
+    }
+
+    @Test
+    void updatePassword_shouldThrowSamePasswordException_whenOldPasswordMatchesNewPassword() {
+        // Arrange
+        ResetPasswordRequest request = ResetPasswordRequest.builder()
+                .email("test@example.com")
+                .newPassword("samePassword")
+                .build();
+
+        User user = new User();
+        user.setEmail("test@example.com");
+        user.setPassword("encodedPassword");
+
+        when(userService.getUserByEmail("test@example.com"))
+                .thenReturn(Optional.of(user));
+        when(passwordEncoder.matches("samePassword", "encodedPassword"))
+                .thenReturn(true);
+
+        // Act & Assert
+        assertThrows(SamePasswordException.class, () -> authService.updatePassword(request));
+    }
+
+
 }
