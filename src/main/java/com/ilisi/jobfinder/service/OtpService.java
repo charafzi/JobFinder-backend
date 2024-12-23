@@ -4,8 +4,6 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.AllArgsConstructor;
 import org.jboss.aerogear.security.otp.Totp;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -51,10 +49,6 @@ public class OtpService {
         // Generate the HTML content with Thymeleaf
         String htmlContent = templateEngine.process("otp-email", context);
         helper.setText(htmlContent, true);
-
-        // Embed the image
-        ClassPathResource resource = new ClassPathResource("static/images/FD.png"); // Place the image in src/main/resources/static/images/
-        helper.addInline("flashDealsLogo", resource);
 
         mailSender.send(message);
     }

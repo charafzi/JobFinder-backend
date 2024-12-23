@@ -22,6 +22,7 @@ public class EntrepriseService {
         }
         Entreprise entreprise = new Entreprise();
         entreprise.setEmail(entrepriseRequest.getEmail());
+        entreprise.setNom(entrepriseRequest.getNom());
         entreprise.setPassword(passwordEncoder.encode(entrepriseRequest.getPassword())); // Hashage du mot de passe
         entreprise.setAdresse(entrepriseRequest.getAdresse());
         entreprise.setTelephone(entrepriseRequest.getPhoneNumber());

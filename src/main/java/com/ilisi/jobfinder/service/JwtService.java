@@ -6,6 +6,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -25,22 +26,36 @@ public class JwtService {
     }
 
     ///generate token without extra clails
-    public String generateToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(),userDetails);
+//    public String generateToken(User userDetails) {
+//        return generateToken(new HashMap<>(),userDetails);
+//    }
+//
+//    ///generate token with extra claims
+//    private String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
+//        return Jwts
+//                .builder()
+//                .setClaims(extraClaims)
+//                .setSubject(userDetails.getUsername()) // set subject for jwt token
+//                .setIssuedAt(new Date(System.currentTimeMillis())) //this will help us to check and validate expiration of token
+//                .setExpiration(new Date(System.currentTimeMillis() +1000 *60 *24)) // expiration = currentTime + 24h
+//                .signWith(getSignKey(),SignatureAlgorithm.HS256)
+//                .compact();
+//        //return createToken(claims, userName);
+//
+//    }
+    public String generateToken(String email) {
+        return generateToken(new HashMap<>(), email);
     }
 
-    ///generate token with extra claims
-    private String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
+    private String generateToken(Map<String, Object> extraClaims, String email) {
         return Jwts
                 .builder()
                 .setClaims(extraClaims)
-                .setSubject(userDetails.getUsername()) // set subject for jwt token
-                .setIssuedAt(new Date(System.currentTimeMillis())) //this will help us to check and validate expiration of token
-                .setExpiration(new Date(System.currentTimeMillis() +1000 *60 *24)) // expiration = currentTime + 24h
-                .signWith(getSignKey(),SignatureAlgorithm.HS256)
+                .setSubject(email) // Utilisation de l'email comme sujet
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24)) // Expiration après 24 heures
+                .signWith(getSignKey(), SignatureAlgorithm.HS256)
                 .compact();
-        //return createToken(claims, userName);
-
     }
 
     private Boolean isTokenExpired(String token) {
