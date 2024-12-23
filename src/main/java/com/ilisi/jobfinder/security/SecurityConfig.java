@@ -28,7 +28,7 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)// Disables CSRF protection to bypass errors during developement
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/auth/**").permitAll() // Autoriser l'accès public/anonyme
+                        .requestMatchers("/api/auth/**","/api/offre/**").permitAll() // Autoriser l'accès public/anonyme
                         .anyRequest().authenticated() // Authentication required for all requests
                 )
                 .sessionManagement(session -> session
@@ -37,15 +37,15 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
-    }
+//    @Bean
+//    public PasswordEncoder passwordEncoder() {
+//        return new BCryptPasswordEncoder();
+//    }
+//
+//    @Bean
+//    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+//        return authenticationConfiguration.getAuthenticationManager();
+//    }
 }
   /*  @Bean
     public UserDetailsService userDetailsService() {

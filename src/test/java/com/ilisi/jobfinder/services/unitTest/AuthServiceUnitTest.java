@@ -62,7 +62,7 @@ class AuthServiceUnitTest {
         Authentication authentication = mock(Authentication.class);
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(authentication);
         when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(user));
-        when(jwtService.generateToken(user)).thenReturn("mocked-jwt-token");
+        when(jwtService.generateToken(user.getEmail())).thenReturn("mocked-jwt-token");
 
         // Act
         LoginResponse response = authService.authenticate(loginRequest);
@@ -71,7 +71,7 @@ class AuthServiceUnitTest {
         assertNotNull(response);
         assertEquals("mocked-jwt-token", response.getToken());
         verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
-        verify(jwtService).generateToken(user);
+        verify(jwtService).generateToken(user.getEmail());
     }
 
     @Test

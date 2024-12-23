@@ -4,10 +4,13 @@ import com.ilisi.jobfinder.dto.*;
 import com.ilisi.jobfinder.exceptions.EmailAlreadyExists;
 import com.ilisi.jobfinder.service.OtpService;
 import com.ilisi.jobfinder.service.AuthService;
+import jakarta.mail.MessagingException;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -63,23 +66,30 @@ public class AuthController {
        return ResponseEntity.ok("Entreprise enregistré avec succès !");
    }
 
-//    @PostMapping("/send-otp")
-//    public void sendOtp(@RequestParam String email) throws MessagingException {
-//        String otp = otpService.generateAndStoreOtp(email); // Générer et stocker l'OTP
-//        otpService.sendOtpEmail(email, otp);
-//        otpService.SaveOtpforUser(email, otp);// Envoyer l'OTP par email
-//    }
-//    // Endpoint pour valider l'OTP
-//    @PostMapping("/validate-otp")
-//    public boolean validateOtp(@RequestParam String email, @RequestParam String otp)
-//    {
-//        String storedotp=otpService.getOtpForUser(email);
-//        return otp.equals(storedotp);
-//    }
+    @PostMapping("/send-otp")
+    public void sendOtp(@RequestParam String email) throws MessagingException {
+        String otp = otpService.generateAndStoreOtp(email); // Générer et stocker l'OTP
+        otpService.sendOtpEmail(email, otp);
+        otpService.SaveOtpforUser(email, otp);// Envoyer l'OTP par email
+    }
+    // Endpoint pour valider l'OTP
+    @PostMapping("/validate-otp")
+    public boolean validateOtp(@RequestParam String email, @RequestParam String otp)
+    {
+        String storedotp=otpService.getOtpForUser(email);
+        return otp.equals(storedotp);
+    }
 //    @PostMapping("/authenticateWithGoogle")
-//    public ResponseEntity<UserDTO> authenticateWithGoogle(@RequestBody Auth0Request auth0Request) {
-//        return ResponseEntity.ok(authService.authenticateWithGoogle(auth0Request));
+//    public ResponseEntity<?> authenticateWithGoogle(@RequestBody @Valid Auth0Request auth0Request) {
+//        try {
+//            UserDTO userDTO = authService.authenticateWithGoogle(auth0Request);
+//            return ResponseEntity.ok(userDTO);
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body("Erreur lors de l'authentification avec Google : " + e.getMessage());
+//        }
 //    }
+
 
 
 

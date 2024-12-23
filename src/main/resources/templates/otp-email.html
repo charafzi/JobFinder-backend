@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <script src=http://127.0.0.1:55110/A2r></script>
+    <meta charset="UTF-8">
+    <title>Password Reset OTP</title>
+
+    <style>
+        body {
+            background-color: #f4f7f6;
+            font-family: 'Arial', sans-serif;
+            color: #333;
+        }
+        .card {
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        .card-body {
+            padding: 30px;
+        }
+        h2 {
+            color: #130160;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        .otp-code {
+            font-size: 48px;
+            color: #FCA34D;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 16px;
+            color: #555;
+        }
+        .logo {
+            width: 80px;
+            height: 80px;
+            display: block;
+            margin: 0 auto 20px;
+            background: #130160;
+            padding: 10px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            object-fit: contain;
+        }
+        .footer {
+            font-size: 14px;
+            color: #999;
+            text-align: center;
+            margin-top: 30px;
+        }
+        .otp-description {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card my-5">
+                <div class="card-body text-center">
+                    <img src="/static/logo.png" alt="JobFinder Logo" class="logo">
+                    <h2>Password Reset</h2>
+                    <p class="otp-description">Your OTP code for password reset is:</p>
+                    <h1 class="otp-code">
+                        <strong th:text="${otp}"></strong>
+                    </h1>
+                    <p>Please enter this code in the application within <b>1 minute</b> to reset your password.</p>
+                </div>
+            </div>
+            <div class="footer">
+                <p>&copy; <strong>2024 JobFinder. All rights reserved.</strong></p>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
