@@ -49,6 +49,7 @@ public class AuthService {
         Optional<User> user = userService.getUserByEmail(email);
         return user.isPresent();
     }
+    
     public User saveUser(User user){
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userService.saveUser(user);

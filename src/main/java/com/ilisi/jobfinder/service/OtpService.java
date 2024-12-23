@@ -47,14 +47,14 @@ public class OtpService {
         // Set up Thymeleaf context
         Context context = new Context();
         context.setVariable("otp", otp);
+        context.setVariable("logoImage", "cid:jobFinderLogo");
 
         // Generate the HTML content with Thymeleaf
         String htmlContent = templateEngine.process("otp-email", context);
         helper.setText(htmlContent, true);
 
-        // Embed the image
-        ClassPathResource resource = new ClassPathResource("static/images/FD.png"); // Place the image in src/main/resources/static/images/
-        helper.addInline("flashDealsLogo", resource);
+        ClassPathResource resource = new ClassPathResource("static/logo.png");
+        helper.addInline("jobFinderLogo", resource);
 
         mailSender.send(message);
     }
