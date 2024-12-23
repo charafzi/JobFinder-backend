@@ -2,7 +2,6 @@ package com.ilisi.jobfinder.services.integrationTest;
 
 import com.ilisi.jobfinder.Enum.Role;
 import com.ilisi.jobfinder.exceptions.EmailAlreadyExists;
-import com.ilisi.jobfinder.model.Candidat;
 import com.ilisi.jobfinder.model.Entreprise;
 import com.ilisi.jobfinder.model.User;
 import com.ilisi.jobfinder.repository.UserRepository;
@@ -17,8 +16,6 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -62,7 +59,7 @@ public class EntrepriseServiceIntegrationTest {
         entreprise.setTelephone("0620302030");
         entreprise.setRole(Role.ENTREPRISE);
 
-        User savedUser = userService.createUser(entreprise);
+        User savedUser = userService.saveUser(entreprise);
 
         assertThat(savedUser).isNotNull();
         assertThat(savedUser.getEmail()).isEqualTo(entreprise.getEmail());

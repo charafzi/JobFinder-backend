@@ -28,6 +28,6 @@ public class EntrepriseService {
         entreprise.setTelephone(entrepriseRequest.getPhoneNumber());
         entreprise.setRole(Role.ENTREPRISE);
 
-        return userService.createUser(entreprise);
+        return userService.saveUser(entreprise);
     }
 }
