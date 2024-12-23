@@ -1,8 +1,11 @@
 package com.ilisi.jobfinder.service;
 
+import com.ilisi.jobfinder.Enum.Role;
 import com.ilisi.jobfinder.controller.AuthController;
 import com.ilisi.jobfinder.dto.*;
 import com.ilisi.jobfinder.exceptions.EmailAlreadyExists;
+import com.ilisi.jobfinder.model.Candidat;
+import com.ilisi.jobfinder.model.Entreprise;
 import com.ilisi.jobfinder.exceptions.EmailNotExist;
 import com.ilisi.jobfinder.exceptions.SamePasswordException;
 import com.ilisi.jobfinder.model.User;
@@ -18,13 +21,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.util.Optional;
 
 
 @Service
 @AllArgsConstructor
 public class AuthService {
+
     private final UserRepository userRepository;
     private final  PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
@@ -33,6 +36,7 @@ public class AuthService {
     private final CandidatService candidatService;
     private final EntrepriseService entrepriseService;
     private static final Logger log = LoggerFactory.getLogger(AuthController.class);
+
 
     public void validateToken(String token) {
         try {
@@ -72,19 +76,20 @@ public class AuthService {
         }else
             throw new EmailNotExist("No user with email = "+resetPasswordRequest.getEmail());
     }
-    public boolean verifyUser(LoginRequest loginRequest){
-        User user=userService.getUserByEmail(loginRequest.getEmail())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + loginRequest.getEmail()));
-        // Check if the password matches the encoded password in the database
+    public boolean verifyUser(LoginRequest loginRequest) {
+        User user = userService.getUserByEmail(loginRequest.getEmail())
+                .orElseThrow(() -> new UsernameNotFoundException("Utilisateur introuvable"));
+        // Vérification du mot de passe
         return passwordEncoder.matches(loginRequest.getPassword(), user.getPassword());
     }
+
 
     public LoginResponse authenticate(LoginRequest loginRequest) throws UsernameNotFoundException, BadCredentialsException {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
         );
         User user = userRepository.findByEmail(loginRequest.getEmail()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        String jwtToken = jwtService.generateToken(user);
+        String jwtToken = jwtService.generateToken(user.getEmail());
         return LoginResponse.builder().token(jwtToken).build();
     }
 
@@ -113,25 +118,7 @@ public class AuthService {
 //            user = userOpt.get();
 //        } else {
 //            // Si l'utilisateur n'existe pas, en créer un nouveau
-//            if (auth0Request.getRole() == Role.ENTREPRISE) {
-//                // Si l'utilisateur est une entreprise
-//                user = Entreprise.builder()
-//                        .googleId(auth0Request.getSub())
-//                        .email(auth0Request.getEmail())
-//                        .fullName(auth0Request.getName()) // Spécifique à Entreprise
-//                        .profilePicture(auth0Request.getPicture())
-//                        .role(Role.ENTREPRISE)
-//                        .build();
-//            } else {
-//                // Si l'utilisateur est un candidat
-//                user = Candidat.builder()
-//                        .googleId(auth0Request.getSub())
-//                        .email(auth0Request.getEmail())
-//                        .fullName(auth0Request.getName()) // Spécifique à Candidat
-//                        .profilePicture(auth0Request.getPicture())
-//                        .role(Role.CANDIDAT)
-//                        .build();
-//            }
+//            user = auth0Request.toUser();  // Utilisation de la méthode toUser() pour créer l'utilisateur
 //
 //            // Sauvegarder l'utilisateur
 //            user = userService.createUser(user);
@@ -150,7 +137,6 @@ public class AuthService {
 //                .role(user.getRole())
 //                .build();
 //    }
-
 
 
 
