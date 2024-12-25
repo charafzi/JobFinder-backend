@@ -53,6 +53,7 @@ public class AuthService {
         Optional<User> user = userService.getUserByEmail(email);
         return user.isPresent();
     }
+    
     public User saveUser(User user){
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userService.saveUser(user);
@@ -84,10 +85,10 @@ public class AuthService {
 
 
     public LoginResponse authenticate(LoginRequest loginRequest) throws UsernameNotFoundException, BadCredentialsException {
+        User user = userRepository.findByEmail(loginRequest.getEmail()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
         );
-        User user = userRepository.findByEmail(loginRequest.getEmail()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
         String jwtToken = jwtService.generateToken(user.getEmail());
         return LoginResponse.builder().token(jwtToken).build();
     }

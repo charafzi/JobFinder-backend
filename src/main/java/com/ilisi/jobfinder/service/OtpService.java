@@ -1,9 +1,13 @@
 package com.ilisi.jobfinder.service;
 
+import com.ilisi.jobfinder.exceptions.EmailNotExist;
+import com.ilisi.jobfinder.model.User;
+import com.ilisi.jobfinder.repository.UserRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.AllArgsConstructor;
 import org.jboss.aerogear.security.otp.Totp;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -13,6 +17,7 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.time.Duration;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -22,8 +27,13 @@ public class OtpService {
     private JavaMailSender mailSender;
     private StringRedisTemplate redisTemplate;
     private SpringTemplateEngine templateEngine;
+    private final UserRepository userRepository;
 
-    public String generateAndStoreOtp(String email) {
+    public String generateAndStoreOtp(String email) throws EmailNotExist {
+        Optional<User> userOptional = userRepository.findByEmail(email);
+        if(userOptional.isEmpty()){
+            throw new EmailNotExist("No user registered with email = "+email);
+        }
         Totp totp = new Totp(SECRET);
         String otp = totp.now();
 
@@ -45,10 +55,14 @@ public class OtpService {
         // Set up Thymeleaf context
         Context context = new Context();
         context.setVariable("otp", otp);
+        context.setVariable("logoImage", "cid:jobFinderLogo");
 
         // Generate the HTML content with Thymeleaf
         String htmlContent = templateEngine.process("otp-email", context);
         helper.setText(htmlContent, true);
+
+        ClassPathResource resource = new ClassPathResource("static/logo.png");
+        helper.addInline("jobFinderLogo", resource);
 
         mailSender.send(message);
     }
