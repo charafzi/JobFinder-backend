@@ -28,7 +28,7 @@ public class CandidatService {
         candidat.setTelephone(candidatRequest.getPhoneNumber());
         candidat.setRole(Role.CANDIDAT);
 
-        return userService.createUser(candidat);
+        return userService.saveUser(candidat);
     }
 }
 
