@@ -8,7 +8,6 @@ import com.ilisi.jobfinder.model.User;
 import com.ilisi.jobfinder.service.OtpService;
 import com.ilisi.jobfinder.service.AuthService;
 import jakarta.mail.MessagingException;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,18 +69,29 @@ public class AuthController {
        return ResponseEntity.ok("Entreprise enregistré avec succès !");
    }
 
-    @PostMapping("/send-otp")
-    public void sendOtp(@RequestParam String email) throws MessagingException {
-        String otp = otpService.generateAndStoreOtp(email); // Générer et stocker l'OTP
-        otpService.sendOtpEmail(email, otp);
-        otpService.SaveOtpforUser(email, otp);// Envoyer l'OTP par email
+    @GetMapping("/send-otp")
+    public ResponseEntity<String> sendOtp(@RequestParam String email){
+        try {
+            String otp = otpService.generateAndStoreOtp(email); // Générer et stocker l'OTP
+            otpService.sendOtpEmail(email, otp);
+            otpService.SaveOtpforUser(email, otp);// Envoyer l'OTP par email
+            return ResponseEntity.ok().body("Code OTP has been sent successfully.");
+        }catch (EmailNotExist e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cannot send OTP code. No user registered with this email.");
+        }
+        catch (MessagingException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error during sending OTP code.");
+        }
     }
     // Endpoint pour valider l'OTP
-    @PostMapping("/validate-otp")
-    public boolean validateOtp(@RequestParam String email, @RequestParam String otp)
+    @GetMapping("/validate-otp")
+    public ResponseEntity<?> validateOtp(@RequestParam String email, @RequestParam String otp)
     {
         String storedotp=otpService.getOtpForUser(email);
-        return otp.equals(storedotp);
+       return otp.equals(storedotp) ?
+               ResponseEntity.ok().body("OTP valid") :
+               ResponseEntity.badRequest().body("OTP Invalid");
+
     }
    @PostMapping("/resetPassword")
     public ResponseEntity<?> updatePassword(@RequestBody ResetPasswordRequest resetPasswordRequest){
