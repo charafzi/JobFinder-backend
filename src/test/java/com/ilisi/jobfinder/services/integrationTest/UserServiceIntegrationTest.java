@@ -56,7 +56,7 @@ public class UserServiceIntegrationTest {
         user.setEmail("test@example.com");
         user.setGoogleId("12345");
 
-        User savedUser = userService.createUser(user);
+        User savedUser = userService.saveUser(user);
 
         assertThat(savedUser).isNotNull();
         assertThat(savedUser.getEmail()).isEqualTo("test@example.com");
@@ -67,7 +67,7 @@ public class UserServiceIntegrationTest {
         User user = new User();
         user.setEmail("test@example.com");
         user.setGoogleId("12345");
-        userService.createUser(user);
+        userService.saveUser(user);
 
         Optional<User> foundUser = userService.getUserByEmail("test@example.com");
 
@@ -80,7 +80,7 @@ public class UserServiceIntegrationTest {
         User user = new User();
         user.setEmail("test@example.com");
         user.setGoogleId("12345");
-        userService.createUser(user);
+        userService.saveUser(user);
 
         Optional<User> foundUser = userService.getUserbyGoogleId("12345");
 

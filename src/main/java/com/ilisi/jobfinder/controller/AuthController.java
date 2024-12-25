@@ -2,21 +2,24 @@ package com.ilisi.jobfinder.controller;
 
 import com.ilisi.jobfinder.dto.*;
 import com.ilisi.jobfinder.exceptions.EmailAlreadyExists;
+import com.ilisi.jobfinder.exceptions.EmailNotExist;
+import com.ilisi.jobfinder.exceptions.SamePasswordException;
+import com.ilisi.jobfinder.model.User;
 import com.ilisi.jobfinder.service.OtpService;
 import com.ilisi.jobfinder.service.AuthService;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import lombok.extern.java.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
+
+
 
 @RestController
 @AllArgsConstructor
@@ -56,6 +59,7 @@ public class AuthController {
         }
         return ResponseEntity.ok("Candidat enregistré avec succès !");
     }
+
    @PostMapping("/registerEntreprise")
    public ResponseEntity<?> registerEntreprise(@RequestBody RegisterEntrepriseRequest entrepriseRequest) {
        try {
@@ -79,6 +83,35 @@ public class AuthController {
         String storedotp=otpService.getOtpForUser(email);
         return otp.equals(storedotp);
     }
+   @PostMapping("/resetPassword")
+    public ResponseEntity<?> updatePassword(@RequestBody ResetPasswordRequest resetPasswordRequest){
+       try {
+           User user = authService.updatePassword(resetPasswordRequest);
+           return ResponseEntity.ok(user);
+       } catch (EmailNotExist e) {
+           return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Email does not exist.");
+       } catch (SamePasswordException e) {
+           return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("The new password cannot be the same as the old password.");
+       }
+       catch (Exception e){
+           return ResponseEntity.badRequest().body(null);
+       }
+   }
+
+
+//    @PostMapping("/send-otp")
+//    public void sendOtp(@RequestParam String email) throws MessagingException {
+//        String otp = otpService.generateAndStoreOtp(email); // Générer et stocker l'OTP
+//        otpService.sendOtpEmail(email, otp);
+//        otpService.SaveOtpforUser(email, otp);// Envoyer l'OTP par email
+//    }
+//    // Endpoint pour valider l'OTP
+//    @PostMapping("/validate-otp")
+//    public boolean validateOtp(@RequestParam String email, @RequestParam String otp)
+//    {
+//        String storedotp=otpService.getOtpForUser(email);
+//        return otp.equals(storedotp);
+//    }
 //    @PostMapping("/authenticateWithGoogle")
 //    public ResponseEntity<?> authenticateWithGoogle(@RequestBody @Valid Auth0Request auth0Request) {
 //        try {
