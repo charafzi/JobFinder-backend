@@ -212,7 +212,7 @@ class OffreControllerUnitTest {
         searchDTO.setSortBy(SortBy.PUB_DATE);
         searchDTO.setSortDirection(SortDirection.DESC);
         EntrepriseDTO entrepriseDTO = new EntrepriseDTO();
-        entrepriseDTO.setNom("Test company");
+        entrepriseDTO.setName("Test company");
         entrepriseDTO.setEmail("test@gmail.com");
 
         OffreSearchResponseDTO responseDTO = OffreSearchResponseDTO.builder()
