@@ -1,6 +1,7 @@
 package com.ilisi.jobfinder.controller;
 
 import com.ilisi.jobfinder.dto.EntrepriseDTO;
+import com.ilisi.jobfinder.exceptions.EmailNotExist;
 import com.ilisi.jobfinder.model.SecteurActivite;
 import com.ilisi.jobfinder.service.EntrepriseService;
 import lombok.AllArgsConstructor;
@@ -37,6 +38,20 @@ public class EntrepriseController {
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(null);
         }
+    }
+
+    @GetMapping("/{email}")
+    public ResponseEntity<EntrepriseDTO> getEntrepriseByEmail(@PathVariable String email){
+        try {
+            EntrepriseDTO entrepriseDTO = this.entrepriseService.getEntrepriseByEmail(email);
+            return ResponseEntity.ok(entrepriseDTO);
+        } catch (EmailNotExist e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        catch (Exception e){
+            return ResponseEntity.internalServerError().body(null);
+        }
+
     }
 
     @GetMapping("/secteurs-activites")

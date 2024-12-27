@@ -5,6 +5,7 @@ import com.ilisi.jobfinder.Enum.Role;
 import com.ilisi.jobfinder.dto.Auth.RegisterEntrepriseRequest;
 import com.ilisi.jobfinder.dto.EntrepriseDTO;
 import com.ilisi.jobfinder.exceptions.EmailAlreadyExists;
+import com.ilisi.jobfinder.exceptions.EmailNotExist;
 import com.ilisi.jobfinder.mapper.AdresseMapper;
 import com.ilisi.jobfinder.mapper.EntrepriseMapper;
 import com.ilisi.jobfinder.model.Entreprise;
@@ -18,13 +19,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 @Service
@@ -49,6 +48,22 @@ public class EntrepriseService {
         entreprise.setRole(Role.ENTREPRISE);
 
         return userService.saveUser(entreprise);
+    }
+
+    public EntrepriseDTO getEntrepriseByEmail(String email) throws EmailNotExist{
+        Optional<User> oUser = userService.getUserByEmail(email);
+        if (oUser.isEmpty()) {
+            throw new EmailNotExist("Entreprise with email=" +  email + " is not existing.");
+        }
+        User user = this.userService.getUserByEmail(email).get();
+
+        if (!(user instanceof Entreprise)) {
+            throw new IllegalStateException("User with email=" +  email + " is not an Entreprise.");
+        }
+
+        Entreprise entreprise = (Entreprise) user;
+
+        return EntrepriseMapper.toDto(entreprise);
     }
 
     public EntrepriseDTO updateEntreprise(EntrepriseDTO entrepriseDTO){
