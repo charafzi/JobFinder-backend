@@ -4,6 +4,8 @@ package com.ilisi.jobfinder.service;
 import com.ilisi.jobfinder.Enum.Role;
 import com.ilisi.jobfinder.dto.Auth.RegisterEntrepriseRequest;
 import com.ilisi.jobfinder.exceptions.EmailAlreadyExists;
+import com.ilisi.jobfinder.mapper.AdresseMapper;
+import com.ilisi.jobfinder.model.Adresse;
 import com.ilisi.jobfinder.model.Entreprise;
 import com.ilisi.jobfinder.model.User;
 import lombok.AllArgsConstructor;
@@ -24,7 +26,7 @@ public class EntrepriseService {
         entreprise.setEmail(entrepriseRequest.getEmail());
         entreprise.setNom(entrepriseRequest.getNom());
         entreprise.setPassword(passwordEncoder.encode(entrepriseRequest.getPassword())); // Hashage du mot de passe
-        entreprise.setAdresse(entrepriseRequest.getAdresse());
+        entreprise.setAdresse(AdresseMapper.toEntity(entrepriseRequest.getAdresse()));
         entreprise.setTelephone(entrepriseRequest.getPhoneNumber());
         entreprise.setRole(Role.ENTREPRISE);
 
