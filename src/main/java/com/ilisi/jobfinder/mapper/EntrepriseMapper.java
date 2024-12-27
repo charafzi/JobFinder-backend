@@ -10,7 +10,7 @@ public class EntrepriseMapper {
                 .id(entity.getId())
                 .nom(entity.getNom())
                 .email(entity.getEmail())
-                .adresse(entity.getAdresse())
+                .adresse(AdresseMapper.toDto(entity.getAdresse()))
                 .photoProfile(entity.getPhotoProfile())
                 .telephone(entity.getTelephone())
                 .build();

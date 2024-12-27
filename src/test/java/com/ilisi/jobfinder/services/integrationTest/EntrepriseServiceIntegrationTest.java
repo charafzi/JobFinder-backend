@@ -2,6 +2,7 @@ package com.ilisi.jobfinder.services.integrationTest;
 
 import com.ilisi.jobfinder.Enum.Role;
 import com.ilisi.jobfinder.exceptions.EmailAlreadyExists;
+import com.ilisi.jobfinder.model.Adresse;
 import com.ilisi.jobfinder.model.Entreprise;
 import com.ilisi.jobfinder.model.User;
 import com.ilisi.jobfinder.repository.UserRepository;
@@ -55,7 +56,10 @@ public class EntrepriseServiceIntegrationTest {
         Entreprise entreprise = new Entreprise();
         entreprise.setEmail("test@test.com");
         entreprise.setPassword("123456789");
-        entreprise.setAdresse("adress1");
+        Adresse adresse = new Adresse();
+        adresse.setVille("ville1");
+        adresse.setAdresse("adreese1");
+        entreprise.setAdresse(adresse);
         entreprise.setTelephone("0620302030");
         entreprise.setRole(Role.ENTREPRISE);
 
