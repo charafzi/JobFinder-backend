@@ -29,18 +29,20 @@ public class AuthController {
     private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest){
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest){
         System.out.println("Tentative de connexion avec : " + loginRequest.getEmail());
         try{
-            LoginResponse loginResponse =authService.authenticate(loginRequest);
+            Object response =authService.authenticate(loginRequest);
             //log.info("Authentification user :{} "+loginRequest.getEmail());
-            return ResponseEntity.ok(loginResponse);
+            return ResponseEntity.ok(response);
         } catch (UsernameNotFoundException e) {
             return ResponseEntity.status(404).body(null); //invalid email
         } catch (BadCredentialsException e) {
             return ResponseEntity.status(401).body(null); //invalid password
         } catch (AuthenticationException e) {
             return ResponseEntity.status(401).body(null); //generic authentication failure
+        }catch (Exception e){
+            return ResponseEntity.status(500).body(null); //generic authentication failure
         }
     }
     @GetMapping("/validateToken")

@@ -22,9 +22,8 @@ public class CandidatService {
         Candidat candidat = new Candidat();
         candidat.setEmail(candidatRequest.getEmail());
         candidat.setPassword(passwordEncoder.encode(candidatRequest.getPassword())); // Hashage du mot de passe
-        candidat.setPhotoProfile(candidatRequest.getPhotoProfile());
-        candidat.setNom(candidatRequest.getFirstName());
-        candidat.setPrenom(candidatRequest.getLastName());
+        candidat.setNom(candidatRequest.getLastName());
+        candidat.setPrenom(candidatRequest.getFirstName());
         candidat.setTelephone(candidatRequest.getPhoneNumber());
         candidat.setRole(Role.CANDIDAT);
 

@@ -44,7 +44,7 @@ public class EntrepriseService {
         entreprise.setEmail(entrepriseRequest.getEmail());
         entreprise.setNom(entrepriseRequest.getNom());
         entreprise.setPassword(passwordEncoder.encode(entrepriseRequest.getPassword())); // Hashage du mot de passe
-        entreprise.setAdresse(AdresseMapper.toEntity(entrepriseRequest.getAdresse()));
+        entreprise.setAdresse(AdresseMapper.toEntity(entrepriseRequest.getAdress()));
         entreprise.setTelephone(entrepriseRequest.getPhoneNumber());
         entreprise.setRole(Role.ENTREPRISE);
 
@@ -65,8 +65,8 @@ public class EntrepriseService {
         if (entrepriseDTO.getName() != null) {
             entreprise.setNom(entrepriseDTO.getName());
         }
-        if (entrepriseDTO.getProfilePic() != null) {
-            entreprise.setPhotoProfile(entrepriseDTO.getProfilePic());
+        if (entrepriseDTO.getProfilePicture() != null) {
+            entreprise.setPhotoProfile(entrepriseDTO.getProfilePicture());
         }
         if (entrepriseDTO.getPhoneNumber() != null) {
             entreprise.setTelephone(entrepriseDTO.getPhoneNumber());

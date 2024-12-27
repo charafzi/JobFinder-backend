@@ -68,7 +68,7 @@ class AuthServiceUnitTest {
         when(jwtService.generateToken(user.getEmail())).thenReturn("mocked-jwt-token");
 
         // Act
-        LoginResponse response = authService.authenticate(loginRequest);
+        LoginResponse response = (LoginResponse) authService.authenticate(loginRequest);
 
         // Assert
         assertNotNull(response);

@@ -12,5 +12,5 @@ public class RegisterEntrepriseRequest {
     private String email;
     private String password;
     private Role role=Role.ENTREPRISE;
-    private AdresseDTO adresse;
+    private AdresseDTO adress;
 }
