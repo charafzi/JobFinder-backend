@@ -11,7 +11,7 @@ public class EntrepriseMapper {
                 .name(entity.getNom())
                 .email(entity.getEmail())
                 .adress(AdresseMapper.toDto(entity.getAdresse()))
-                .profilePic(entity.getPhotoProfile())
+                .profilePicture(entity.getPhotoProfile())
                 .phoneNumber(entity.getTelephone())
                 .activitySectors(entity.getSecteurActivites())
                 .about(entity.getAbout())
