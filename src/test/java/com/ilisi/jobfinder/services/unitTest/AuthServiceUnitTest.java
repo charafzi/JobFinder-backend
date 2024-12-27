@@ -1,9 +1,9 @@
 package com.ilisi.jobfinder.services.unitTest;
 
-import com.ilisi.jobfinder.dto.LoginRequest;
-import com.ilisi.jobfinder.dto.LoginResponse;
-import com.ilisi.jobfinder.dto.RegisterCandidatRequest;
-import com.ilisi.jobfinder.dto.ResetPasswordRequest;
+import com.ilisi.jobfinder.dto.Auth.LoginRequest;
+import com.ilisi.jobfinder.dto.Auth.LoginResponse;
+import com.ilisi.jobfinder.dto.Auth.RegisterCandidatRequest;
+import com.ilisi.jobfinder.dto.Auth.ResetPasswordRequest;
 import com.ilisi.jobfinder.exceptions.EmailAlreadyExists;
 import com.ilisi.jobfinder.exceptions.EmailNotExist;
 import com.ilisi.jobfinder.exceptions.SamePasswordException;
@@ -68,7 +68,7 @@ class AuthServiceUnitTest {
         when(jwtService.generateToken(user.getEmail())).thenReturn("mocked-jwt-token");
 
         // Act
-        LoginResponse response = authService.authenticate(loginRequest);
+        LoginResponse response = (LoginResponse) authService.authenticate(loginRequest);
 
         // Assert
         assertNotNull(response);

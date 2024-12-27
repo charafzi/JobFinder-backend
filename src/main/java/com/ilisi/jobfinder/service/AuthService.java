@@ -1,13 +1,16 @@
 package com.ilisi.jobfinder.service;
 
-import com.ilisi.jobfinder.Enum.Role;
 import com.ilisi.jobfinder.controller.AuthController;
-import com.ilisi.jobfinder.dto.*;
+import com.ilisi.jobfinder.dto.Auth.*;
+import com.ilisi.jobfinder.dto.CandidatDTO;
+import com.ilisi.jobfinder.dto.EntrepriseDTO;
 import com.ilisi.jobfinder.exceptions.EmailAlreadyExists;
-import com.ilisi.jobfinder.model.Candidat;
-import com.ilisi.jobfinder.model.Entreprise;
 import com.ilisi.jobfinder.exceptions.EmailNotExist;
 import com.ilisi.jobfinder.exceptions.SamePasswordException;
+import com.ilisi.jobfinder.mapper.CandidatMapper;
+import com.ilisi.jobfinder.mapper.EntrepriseMapper;
+import com.ilisi.jobfinder.model.Candidat;
+import com.ilisi.jobfinder.model.Entreprise;
 import com.ilisi.jobfinder.model.User;
 import com.ilisi.jobfinder.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -84,13 +87,24 @@ public class AuthService {
     }
 
 
-    public LoginResponse authenticate(LoginRequest loginRequest) throws UsernameNotFoundException, BadCredentialsException {
+    public Object authenticate(LoginRequest loginRequest) throws UsernameNotFoundException, BadCredentialsException {
         User user = userRepository.findByEmail(loginRequest.getEmail()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
         );
         String jwtToken = jwtService.generateToken(user.getEmail());
-        return LoginResponse.builder().token(jwtToken).build();
+
+        if(user instanceof Entreprise){
+            EntrepriseDTO entrepriseDTO = EntrepriseMapper.toDto((Entreprise) user);
+            entrepriseDTO.setToken(jwtToken);
+            return entrepriseDTO;
+        }else if (user instanceof Candidat){
+            CandidatDTO candidatDTO = CandidatMapper.toDto((Candidat) user);
+            candidatDTO.setToken(jwtToken);
+            return candidatDTO;
+        }
+
+        throw new IllegalStateException("Unknown user type");
     }
 
 
