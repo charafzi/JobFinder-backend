@@ -1,7 +1,6 @@
 package com.ilisi.jobfinder.controller;
 
 
-import com.ilisi.jobfinder.Enum.ContratType;
 import com.ilisi.jobfinder.dto.OffreEmploi.OffreDTO;
 import com.ilisi.jobfinder.dto.OffreEmploi.OffreSearchRequestDTO;
 import com.ilisi.jobfinder.dto.OffreEmploi.OffreSearchResponseDTO;
@@ -16,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+
 
 @RestController
 @AllArgsConstructor
