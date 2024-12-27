@@ -1,6 +1,7 @@
 package com.ilisi.jobfinder.mapper;
 
-import com.ilisi.jobfinder.dto.OffreDTO;
+import com.ilisi.jobfinder.dto.OffreEmploi.OffreDTO;
+import com.ilisi.jobfinder.dto.OffreEmploi.OffreSearchResponseDTO;
 import com.ilisi.jobfinder.model.Entreprise;
 import com.ilisi.jobfinder.model.OffreEmploi;
 
@@ -19,6 +20,20 @@ public class OffreMapper {
         dto.setStatusOffre(offreEmploi.getStatusOffre());
         dto.setEntrepriseId(offreEmploi.getEntreprise().getId());
         return dto;
+    }
+
+    public static OffreSearchResponseDTO toOffreSearchResponseDTO(OffreEmploi offreEmploi){
+        return OffreSearchResponseDTO.builder()
+                .title(offreEmploi.getTitre())
+                .description(offreEmploi.getDescription())
+                .position(offreEmploi.getPoste())
+                .requirements(offreEmploi.getExigences())
+                .contractType(offreEmploi.getTypeContrat())
+                .salary(offreEmploi.getSalaire())
+                .publicationDate(offreEmploi.getDatePublication())
+                .deadlineDate(offreEmploi.getDateLimite())
+                .company(EntrepriseMapper.toDto(offreEmploi.getEntreprise()))
+                .build();
     }
 
     public static OffreEmploi toEntity(OffreDTO dto) {

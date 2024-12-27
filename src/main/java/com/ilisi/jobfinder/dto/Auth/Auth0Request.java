@@ -1,9 +1,6 @@
-package com.ilisi.jobfinder.dto;
+package com.ilisi.jobfinder.dto.Auth;
 
 import com.ilisi.jobfinder.Enum.Role;
-import com.ilisi.jobfinder.model.Candidat;
-import com.ilisi.jobfinder.model.Entreprise;
-import com.ilisi.jobfinder.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

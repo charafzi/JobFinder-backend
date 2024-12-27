@@ -1,6 +1,6 @@
 package com.ilisi.jobfinder.controller;
 
-import com.ilisi.jobfinder.dto.*;
+import com.ilisi.jobfinder.dto.Auth.*;
 import com.ilisi.jobfinder.exceptions.EmailAlreadyExists;
 import com.ilisi.jobfinder.exceptions.EmailNotExist;
 import com.ilisi.jobfinder.exceptions.SamePasswordException;
@@ -107,33 +107,4 @@ public class AuthController {
            return ResponseEntity.badRequest().body(null);
        }
    }
-
-
-//    @PostMapping("/send-otp")
-//    public void sendOtp(@RequestParam String email) throws MessagingException {
-//        String otp = otpService.generateAndStoreOtp(email); // Générer et stocker l'OTP
-//        otpService.sendOtpEmail(email, otp);
-//        otpService.SaveOtpforUser(email, otp);// Envoyer l'OTP par email
-//    }
-//    // Endpoint pour valider l'OTP
-//    @PostMapping("/validate-otp")
-//    public boolean validateOtp(@RequestParam String email, @RequestParam String otp)
-//    {
-//        String storedotp=otpService.getOtpForUser(email);
-//        return otp.equals(storedotp);
-//    }
-//    @PostMapping("/authenticateWithGoogle")
-//    public ResponseEntity<?> authenticateWithGoogle(@RequestBody @Valid Auth0Request auth0Request) {
-//        try {
-//            UserDTO userDTO = authService.authenticateWithGoogle(auth0Request);
-//            return ResponseEntity.ok(userDTO);
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                    .body("Erreur lors de l'authentification avec Google : " + e.getMessage());
-//        }
-//    }
-
-
-
-
 }
