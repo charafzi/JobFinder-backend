@@ -8,8 +8,8 @@ import org.springframework.lang.Nullable;
 @Builder
 @Data
 public class AdresseDTO {
-    private String ville;
-    private String adresse;
+    private String city;
+    private String adress;
     @Nullable
     private Double longitude;
     @Nullable

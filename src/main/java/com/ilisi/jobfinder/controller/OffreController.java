@@ -5,6 +5,7 @@ import com.ilisi.jobfinder.Enum.ContratType;
 import com.ilisi.jobfinder.dto.OffreEmploi.OffreDTO;
 import com.ilisi.jobfinder.dto.OffreEmploi.OffreSearchRequestDTO;
 import com.ilisi.jobfinder.dto.OffreEmploi.OffreSearchResponseDTO;
+import com.ilisi.jobfinder.dto.OffreEmploi.PageResponse;
 import com.ilisi.jobfinder.mapper.OffreMapper;
 import com.ilisi.jobfinder.model.OffreEmploi;
 import com.ilisi.jobfinder.service.OffreEmploiService;
@@ -80,11 +81,11 @@ public class OffreController {
     }
 
     @PostMapping("/search")
-    public ResponseEntity<?> searchOffres(@RequestBody OffreSearchRequestDTO searchRequestDTO){
+    public ResponseEntity<PageResponse<OffreSearchResponseDTO>> searchOffres(@RequestBody OffreSearchRequestDTO searchRequestDTO) {
         try {
             Page<OffreSearchResponseDTO> result = this.offreEmploiService.searchOffres(searchRequestDTO);
-            return ResponseEntity.ok().body(result);
-        }catch (Exception e){
+            return ResponseEntity.ok(PageResponse.of(result));
+        } catch (Exception e) {
             return ResponseEntity.internalServerError().body(null);
         }
     }

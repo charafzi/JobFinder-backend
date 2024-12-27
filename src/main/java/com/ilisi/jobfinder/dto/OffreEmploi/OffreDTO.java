@@ -2,6 +2,7 @@ package com.ilisi.jobfinder.dto.OffreEmploi;
 
 import com.ilisi.jobfinder.Enum.ContratType;
 import com.ilisi.jobfinder.Enum.StatusOffre;
+import com.ilisi.jobfinder.dto.AdresseDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,19 +17,20 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 @NoArgsConstructor
 @Builder
 public class OffreDTO {
-    private String titre;
+    private String title;
     private String description;
-    private String poste;
-    private List<String> exigences;
-    private ContratType typeContrat;
-    private double salaire;
+    private String position;
+    private List<String> requirements;
+    private ContratType contractType;
+    private double salary;
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDateTime datePublication;
+    private LocalDateTime publicationDate;
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDateTime dateLimite;
+    private LocalDateTime deadlineDate;
 
-    private StatusOffre statusOffre;
-    private Long entrepriseId;
+    private StatusOffre status;
+    private Long companyId;
+    private AdresseDTO adress;
 }
