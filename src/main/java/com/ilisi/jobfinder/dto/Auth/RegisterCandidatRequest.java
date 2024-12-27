@@ -1,4 +1,4 @@
-package com.ilisi.jobfinder.dto;
+package com.ilisi.jobfinder.dto.Auth;
 
 import com.ilisi.jobfinder.Enum.Role;
 import lombok.Builder;
@@ -10,7 +10,6 @@ public class RegisterCandidatRequest {
     private String firstName;
     private String lastName;
     private String phoneNumber;
-    private String photoProfile;
     private String email;
     private String password;
     private Role role=Role.CANDIDAT;

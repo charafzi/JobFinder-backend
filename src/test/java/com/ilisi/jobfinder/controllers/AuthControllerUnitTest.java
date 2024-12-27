@@ -2,7 +2,7 @@ package com.ilisi.jobfinder.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ilisi.jobfinder.controller.AuthController;
-import com.ilisi.jobfinder.dto.*;
+import com.ilisi.jobfinder.dto.Auth.*;
 import com.ilisi.jobfinder.exceptions.EmailAlreadyExists;
 import com.ilisi.jobfinder.exceptions.EmailNotExist;
 import com.ilisi.jobfinder.exceptions.SamePasswordException;

@@ -9,6 +9,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class LoginResponse {
+public class CandidatDTO {
+    private Long id;
+    private String email;
+    private String profilePicture;
+    private String phoneNumber;
+    private String firstName;
+    private String lastName;
     private String token;
 }
