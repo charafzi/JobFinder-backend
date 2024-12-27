@@ -1,7 +1,7 @@
 package com.ilisi.jobfinder.service;
 
 import com.ilisi.jobfinder.Enum.Role;
-import com.ilisi.jobfinder.dto.RegisterCandidatRequest;
+import com.ilisi.jobfinder.dto.Auth.RegisterCandidatRequest;
 import com.ilisi.jobfinder.exceptions.EmailAlreadyExists;
 import com.ilisi.jobfinder.model.Candidat;
 import com.ilisi.jobfinder.model.User;

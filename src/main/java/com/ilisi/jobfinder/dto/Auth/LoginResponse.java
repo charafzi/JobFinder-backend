@@ -1,4 +1,4 @@
-package com.ilisi.jobfinder.dto;
+package com.ilisi.jobfinder.dto.Auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

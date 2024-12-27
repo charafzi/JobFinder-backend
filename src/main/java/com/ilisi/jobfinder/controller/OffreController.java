@@ -1,12 +1,16 @@
 package com.ilisi.jobfinder.controller;
 
 
-import com.ilisi.jobfinder.dto.OffreDTO;
+import com.ilisi.jobfinder.Enum.ContratType;
+import com.ilisi.jobfinder.dto.OffreEmploi.OffreDTO;
+import com.ilisi.jobfinder.dto.OffreEmploi.OffreSearchRequestDTO;
+import com.ilisi.jobfinder.dto.OffreEmploi.OffreSearchResponseDTO;
 import com.ilisi.jobfinder.mapper.OffreMapper;
 import com.ilisi.jobfinder.model.OffreEmploi;
 import com.ilisi.jobfinder.service.OffreEmploiService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -72,6 +76,16 @@ public class OffreController {
             return ResponseEntity.noContent().build(); // 204 No Content
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // 404 Not Found
+        }
+    }
+
+    @PostMapping("/search")
+    public ResponseEntity<?> searchOffres(@RequestBody OffreSearchRequestDTO searchRequestDTO){
+        try {
+            Page<OffreSearchResponseDTO> result = this.offreEmploiService.searchOffres(searchRequestDTO);
+            return ResponseEntity.ok().body(result);
+        }catch (Exception e){
+            return ResponseEntity.internalServerError().body(null);
         }
     }
 }

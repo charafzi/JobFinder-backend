@@ -2,7 +2,7 @@ package com.ilisi.jobfinder.service;
 
 
 import com.ilisi.jobfinder.Enum.Role;
-import com.ilisi.jobfinder.dto.RegisterEntrepriseRequest;
+import com.ilisi.jobfinder.dto.Auth.RegisterEntrepriseRequest;
 import com.ilisi.jobfinder.exceptions.EmailAlreadyExists;
 import com.ilisi.jobfinder.model.Entreprise;
 import com.ilisi.jobfinder.model.User;

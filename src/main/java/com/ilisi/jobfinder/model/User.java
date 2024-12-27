@@ -1,5 +1,6 @@
 package com.ilisi.jobfinder.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ilisi.jobfinder.Enum.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

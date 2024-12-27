@@ -1,4 +1,4 @@
-package com.ilisi.jobfinder.dto;
+package com.ilisi.jobfinder.dto.OffreEmploi;
 
 import com.ilisi.jobfinder.Enum.ContratType;
 import com.ilisi.jobfinder.Enum.StatusOffre;
