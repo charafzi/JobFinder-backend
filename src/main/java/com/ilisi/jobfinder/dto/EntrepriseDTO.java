@@ -1,9 +1,12 @@
 package com.ilisi.jobfinder.dto;
 
+import com.ilisi.jobfinder.model.SecteurActivite;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -12,9 +15,10 @@ import lombok.NoArgsConstructor;
 public class EntrepriseDTO {
     private Long id;
     private String email;
-    private String photoProfile;
-    private String telephone;
-    private String nom;
+    private String profilePic;
+    private String phoneNumber;
+    private String name;
     private String about;
-    private AdresseDTO adresse;
+    private List<SecteurActivite> activitySectors;
+    private AdresseDTO adress;
 }

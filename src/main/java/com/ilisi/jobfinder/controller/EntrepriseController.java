@@ -1,6 +1,7 @@
 package com.ilisi.jobfinder.controller;
 
 import com.ilisi.jobfinder.dto.EntrepriseDTO;
+import com.ilisi.jobfinder.model.SecteurActivite;
 import com.ilisi.jobfinder.service.EntrepriseService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -9,6 +10,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 //TODO Add secteur activites handling in All CRUD operations
 
@@ -36,6 +39,11 @@ public class EntrepriseController {
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(null);
         }
+    }
+
+    @GetMapping("/secteurs-activites")
+    public List<SecteurActivite> getSecteurActivites(){
+       return this.entrepriseService.getSecteursActivites();
     }
 
     @PostMapping("/profile-picture/{email}")

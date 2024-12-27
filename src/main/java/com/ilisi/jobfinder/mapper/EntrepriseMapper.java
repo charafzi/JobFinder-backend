@@ -8,11 +8,13 @@ public class EntrepriseMapper {
     public static EntrepriseDTO toDto(Entreprise entity){
         return EntrepriseDTO.builder()
                 .id(entity.getId())
-                .nom(entity.getNom())
+                .name(entity.getNom())
                 .email(entity.getEmail())
-                .adresse(AdresseMapper.toDto(entity.getAdresse()))
-                .photoProfile(entity.getPhotoProfile())
-                .telephone(entity.getTelephone())
+                .adress(AdresseMapper.toDto(entity.getAdresse()))
+                .profilePic(entity.getPhotoProfile())
+                .phoneNumber(entity.getTelephone())
+                .activitySectors(entity.getSecteurActivites())
+                .about(entity.getAbout())
                 .build();
     }
 }

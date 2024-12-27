@@ -8,7 +8,9 @@ import com.ilisi.jobfinder.exceptions.EmailAlreadyExists;
 import com.ilisi.jobfinder.mapper.AdresseMapper;
 import com.ilisi.jobfinder.mapper.EntrepriseMapper;
 import com.ilisi.jobfinder.model.Entreprise;
+import com.ilisi.jobfinder.model.SecteurActivite;
 import com.ilisi.jobfinder.model.User;
+import com.ilisi.jobfinder.repository.SecteurActiviteRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,13 +24,14 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Optional;
+import java.util.List;
 import java.util.stream.Stream;
 
 @Service
 @AllArgsConstructor
 public class EntrepriseService {
     private final UserService userService;
+    private final SecteurActiviteRepository secteurActiviteRepository;
     private final PasswordEncoder passwordEncoder;
     private final String uploadDir = "src/main/java/com/ilisi/jobfinder/assets/entrepriseProfilePic";
     private final Path storageLocation = Paths.get(System.getProperty("user.dir"), uploadDir);
@@ -59,20 +62,26 @@ public class EntrepriseService {
         // Cast User to Entreprise
         Entreprise entreprise = (Entreprise) user;
 
-        if (entrepriseDTO.getNom() != null) {
-            entreprise.setNom(entrepriseDTO.getNom());
+        if (entrepriseDTO.getName() != null) {
+            entreprise.setNom(entrepriseDTO.getName());
         }
-        if (entrepriseDTO.getPhotoProfile() != null) {
-            entreprise.setPhotoProfile(entrepriseDTO.getPhotoProfile());
+        if (entrepriseDTO.getProfilePic() != null) {
+            entreprise.setPhotoProfile(entrepriseDTO.getProfilePic());
         }
-        if (entrepriseDTO.getTelephone() != null) {
-            entreprise.setTelephone(entrepriseDTO.getTelephone());
+        if (entrepriseDTO.getPhoneNumber() != null) {
+            entreprise.setTelephone(entrepriseDTO.getPhoneNumber());
         }
         if (entrepriseDTO.getAbout() != null) {
             entreprise.setAbout(entrepriseDTO.getAbout());
         }
-        if (entrepriseDTO.getAdresse() != null) {
-            entreprise.setAdresse(AdresseMapper.toEntity(entrepriseDTO.getAdresse()));
+        if (entrepriseDTO.getAdress() != null) {
+            entreprise.setAdresse(AdresseMapper.toEntity(entrepriseDTO.getAdress()));
+        }
+        if(entrepriseDTO.getAbout() != null){
+            entreprise.setSecteurActivites(entrepriseDTO.getActivitySectors());
+        }
+        if(entrepriseDTO.getAbout() != null){
+            entreprise.setAbout(entrepriseDTO.getAbout());
         }
         // Save the updated Entreprise entity
         entreprise = (Entreprise) this.userService.saveUser(entreprise);
@@ -148,5 +157,9 @@ public class EntrepriseService {
         }
 
         return Files.readAllBytes(imagePath);
+    }
+
+    public List<SecteurActivite> getSecteursActivites() {
+        return this.secteurActiviteRepository.findAll().stream().toList();
     }
 }
