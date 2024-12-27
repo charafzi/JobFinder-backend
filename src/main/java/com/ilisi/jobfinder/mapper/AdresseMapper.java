@@ -19,8 +19,8 @@ public class AdresseMapper {
             point = geometryFactory.createPoint(new Coordinate(adresseDTO.getLongitude(), adresseDTO.getLatitude()));
         }
         return Adresse.builder()
-                .adresse(adresseDTO.getAdresse())
-                .ville(adresseDTO.getVille())
+                .adresse(adresseDTO.getAdress())
+                .ville(adresseDTO.getCity())
                 .coordiantes(point)
                 .build();
     }
@@ -33,8 +33,8 @@ public class AdresseMapper {
             latitude = adresse.getCoordiantes().getY();
         }
         return AdresseDTO.builder()
-                .adresse(adresse.getAdresse())
-                .ville(adresse.getVille())
+                .adress(adresse.getAdresse())
+                .city(adresse.getVille())
                 .longitude(longitude)
                 .latitude(latitude)
                 .build();

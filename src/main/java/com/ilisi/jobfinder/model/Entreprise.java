@@ -2,10 +2,7 @@ package com.ilisi.jobfinder.model;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,6 +18,13 @@ public class Entreprise extends User {
     @OneToMany(mappedBy = "entreprise", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<OffreEmploi> offres;
-    @OneToOne(cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL)
     private Adresse adresse;
+    @ManyToMany
+    @JoinTable(
+            name = "entreprise_secteur",
+            joinColumns = @JoinColumn(name = "entreprise_id"),
+            inverseJoinColumns = @JoinColumn(name = "secteur_id")
+    )
+    private List<SecteurActivite> secteurActivites;
 }

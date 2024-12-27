@@ -35,6 +35,7 @@ private final UserRepository userRepository;
         if (offreEmploi.getEntreprise() == null || offreEmploi.getEntreprise().getId() == 0) {
             throw new RuntimeException("Entreprise ID is required to create an offre.");
         }
+
         // Récupérez l'utilisateur par son ID
         User user = userRepository.findById(offreEmploi.getEntreprise().getId())
                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + offreEmploi.getEntreprise().getId()));
@@ -43,6 +44,7 @@ private final UserRepository userRepository;
         if (!(user instanceof Entreprise)) {
             throw new RuntimeException("The provided user ID does not belong to an entreprise.");
         }
+
         // Associez l'entreprise à l'offre
         offreEmploi.setEntreprise((Entreprise) user);
 
@@ -90,7 +92,6 @@ private final UserRepository userRepository;
 
         Page<OffreEmploi> offres = offremploiRepository.findAll(spec, pageable);
 
-
         Page<OffreSearchResponseDTO> dtos = offres.map(offre -> {
             OffreSearchResponseDTO dto = OffreMapper.toOffreSearchResponseDTO(offre);
             dto.setTimeAgo(this.calculateTimeAgo(dto.getPublicationDate()));
@@ -99,6 +100,7 @@ private final UserRepository userRepository;
 
         return dtos;
     }
+
 
 
     private String calculateTimeAgo(LocalDateTime datePublication) {

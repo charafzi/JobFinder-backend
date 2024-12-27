@@ -47,15 +47,15 @@ class OffreControllerUnitTest {
     void testCreateOffre_Success() {
         // Arrange
         OffreDTO offreDTO = OffreDTO.builder()
-                .titre("Développeur Java")
+                .title("Développeur Java")
                 .description("Description du poste")
-                .poste("Développeur Senior")
-                .typeContrat(ContratType.CDI)
-                .salaire(50000.0)
-                .datePublication(LocalDateTime.now())
-                .dateLimite(LocalDateTime.now().plusDays(30))
-                .statusOffre(StatusOffre.active)
-                .entrepriseId(1L)
+                .position("Développeur Senior")
+                .contractType(ContratType.CDI)
+                .salary(50000.0)
+                .publicationDate(LocalDateTime.now())
+                .deadlineDate(LocalDateTime.now().plusDays(30))
+                .status(StatusOffre.active)
+                .companyId(1L)
                 .build();
 
         when(offreEmploiService.create_Offre(any(OffreEmploi.class))).thenReturn(new OffreEmploi());
@@ -140,7 +140,7 @@ class OffreControllerUnitTest {
     void testUpdateOffre_Success() {
         // Arrange
         OffreDTO updatedOffreDTO = OffreDTO.builder()
-                .titre("Updated Title")
+                .title("Updated Title")
                 .description("Updated Description")
                 .build();
 
