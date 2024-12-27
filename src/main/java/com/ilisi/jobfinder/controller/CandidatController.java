@@ -1,8 +1,6 @@
 package com.ilisi.jobfinder.controller;
 
-import com.ilisi.jobfinder.dto.EntrepriseDTO;
-import com.ilisi.jobfinder.model.SecteurActivite;
-import com.ilisi.jobfinder.service.EntrepriseService;
+import com.ilisi.jobfinder.service.CandidatService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -11,39 +9,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/api/entreprise")
+@RequestMapping("/api/candidat")
 @AllArgsConstructor
-public class EntrepriseController {
-    private final EntrepriseService entrepriseService;
-
-    @PutMapping()
-    public ResponseEntity<EntrepriseDTO> updateEntreprise(@RequestBody EntrepriseDTO entrepriseDTO){
-        try {
-            EntrepriseDTO e = this.entrepriseService.updateEntreprise(entrepriseDTO);
-            return ResponseEntity.ok(e);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(null);
-        }
-    }
-
-    @DeleteMapping("/{email}")
-    public ResponseEntity<?> deleteEntrepriseByEmail(@PathVariable String email){
-        try {
-            this.entrepriseService.deleteEntrepriseByEmail(email);
-            return ResponseEntity.ok("Entreprise with email="+email+" deleted successfully");
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(null);
-        }
-    }
-
-    @GetMapping("/secteurs-activites")
-    public List<SecteurActivite> getSecteurActivites(){
-       return this.entrepriseService.getSecteursActivites();
-    }
-
+public class CandidatController {
+    private final CandidatService candidatService;
     @PostMapping("/profile-picture/{email}")
     public ResponseEntity<String> saveUserPicture(
             @PathVariable String email,
@@ -61,7 +31,7 @@ public class EntrepriseController {
         }
 
         try {
-            String imageUrl = entrepriseService.uploadProfilePicture(email,file);
+            String imageUrl = candidatService.uploadProfilePicture(email,file);
             return ResponseEntity.ok(imageUrl);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload image: " + e.getMessage());
@@ -72,7 +42,7 @@ public class EntrepriseController {
     public ResponseEntity<byte[]> getProfilePicture(@PathVariable String email) {
         try {
             // Get the binary data of the image
-            byte[] imageData = entrepriseService.getProfilePictureData(email);
+            byte[] imageData = candidatService.getProfilePictureData(email);
 
             // Check if the image data exists
             if (imageData != null) {
