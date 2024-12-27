@@ -15,5 +15,6 @@ public class EntrepriseDTO {
     private String photoProfile;
     private String telephone;
     private String nom;
+    private String about;
     private AdresseDTO adresse;
 }

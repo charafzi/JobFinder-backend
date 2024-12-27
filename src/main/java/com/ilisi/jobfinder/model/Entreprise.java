@@ -15,10 +15,11 @@ import java.util.List;
 @Entity
 public class Entreprise extends User {
     private String nom;
+    private String about;
     @OneToMany(mappedBy = "entreprise", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<OffreEmploi> offres;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private Adresse adresse;
     @ManyToMany
     @JoinTable(
