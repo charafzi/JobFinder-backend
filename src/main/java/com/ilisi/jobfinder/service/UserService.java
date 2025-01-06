@@ -1,6 +1,7 @@
 package com.ilisi.jobfinder.service;
 import com.ilisi.jobfinder.model.User;
 import com.ilisi.jobfinder.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,5 +24,13 @@ public class UserService {
     }
     public Optional<User> getUserbyGoogleId(String googleId){
         return repo.getUserByGoogleId(googleId);
+    }
+    public Optional<User> getUserById(Long id){
+        return this.repo.findById(id);
+    }
+    public void deleteUserByEmail(String email){
+        User user = this.repo.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("User with email=" + email + " not found."));
+        this.repo.delete(user);
     }
 }

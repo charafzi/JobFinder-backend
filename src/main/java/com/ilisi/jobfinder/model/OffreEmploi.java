@@ -1,6 +1,7 @@
 package com.ilisi.jobfinder.model;
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ilisi.jobfinder.Enum.ContratType;
 import com.ilisi.jobfinder.Enum.StatusOffre;
 import jakarta.persistence.*;
@@ -18,7 +19,7 @@ import java.util.List;
 public class OffreEmploi {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
     private String titre;
     private String description;
     private String poste;
@@ -34,5 +35,9 @@ public class OffreEmploi {
     @ManyToOne
     @JoinColumn(name = "entreprise_id", nullable = false)
     private Entreprise entreprise;
-
+    @ManyToOne(cascade = CascadeType.ALL)
+    private Adresse adresse;
+    @OneToMany(mappedBy = "offreEmploi")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    List<Candidature> candidatures;
 }

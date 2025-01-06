@@ -1,15 +1,9 @@
 package com.ilisi.jobfinder.model;
 
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -21,8 +15,17 @@ import java.util.List;
 @Entity
 public class Entreprise extends User {
     private String nom;
-    private String adresse;
+    private String about;
     @OneToMany(mappedBy = "entreprise", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<OffreEmploi> offres;
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    private Adresse adresse;
+    @ManyToMany
+    @JoinTable(
+            name = "entreprise_secteur",
+            joinColumns = @JoinColumn(name = "entreprise_id"),
+            inverseJoinColumns = @JoinColumn(name = "secteur_id")
+    )
+    private List<SecteurActivite> secteurActivites;
 }

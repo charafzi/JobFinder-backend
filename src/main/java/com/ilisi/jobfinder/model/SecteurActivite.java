@@ -1,23 +1,23 @@
 package com.ilisi.jobfinder.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+@Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
-public class Candidat extends User {
-    private String prenom;
+public class SecteurActivite {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String nom;
-    @OneToMany(mappedBy = "candidat")
+    @ManyToMany(mappedBy = "secteurActivites")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private List<Candidature> candidatures;
+    private List<Entreprise> entrepriseList;
 }
