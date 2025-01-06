@@ -11,26 +11,27 @@ public class AdresseMapper {
     public static Adresse toEntity(AdresseDTO adresseDTO){
         GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
         /**
-         * X -> Longitude
-         * Y -> Latitude
+         X = Longitude
+         Y = Latitude
          */
         Point point = null;
-        if(adresseDTO.getLatitude() != null && adresseDTO.getLatitude() != null){
-            point = geometryFactory.createPoint(new Coordinate(adresseDTO.getLongitude(), adresseDTO.getLatitude()));
+        if(adresseDTO.getLatitude() != null && adresseDTO.getLongitude() != null){
+
+            point = geometryFactory.createPoint(new Coordinate(adresseDTO.getLongitude(), adresseDTO.getLatitude()) );
         }
         return Adresse.builder()
                 .adresse(adresseDTO.getAdress())
                 .ville(adresseDTO.getCity())
-                .coordiantes(point)
+                .coordinates(point)
                 .build();
     }
 
     public static AdresseDTO toDto(Adresse adresse) {
         Double longitude = null;
         Double latitude = null;
-        if (adresse.getCoordiantes() != null) {
-            longitude = adresse.getCoordiantes().getX();
-            latitude = adresse.getCoordiantes().getY();
+        if (adresse.getCoordinates() != null) {
+            longitude = adresse.getCoordinates().getX();
+            latitude = adresse.getCoordinates().getY();
         }
         return AdresseDTO.builder()
                 .adress(adresse.getAdresse())

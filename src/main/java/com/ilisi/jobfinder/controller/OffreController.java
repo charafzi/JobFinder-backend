@@ -47,6 +47,18 @@ public class OffreController {
         }
     }
 
+    @GetMapping("/nearby")
+    public ResponseEntity<?> getOffresNearby(@RequestParam double latitude,
+                                             @RequestParam double longitude,
+                                             @RequestParam double radius){
+        try {
+            List<OffreDTO> offreDTOS =  this.offreEmploiService.getOffresInRadius(latitude, longitude, radius);
+            return ResponseEntity.ok(offreDTOS);
+        } catch (Exception e) {
+           return ResponseEntity.badRequest().body("Error while retrieving offres nearby = ["+latitude+","+longitude+"]("+radius+").");
+        }
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<OffreDTO> getOffreById(@PathVariable int id) {
         try {

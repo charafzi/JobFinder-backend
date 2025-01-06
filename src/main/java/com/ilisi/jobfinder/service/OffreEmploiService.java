@@ -1,6 +1,7 @@
 package com.ilisi.jobfinder.service;
 
 
+import com.ilisi.jobfinder.dto.OffreEmploi.OffreDTO;
 import com.ilisi.jobfinder.dto.OffreEmploi.OffreSearchRequestDTO;
 import com.ilisi.jobfinder.dto.OffreEmploi.OffreSearchResponseDTO;
 import com.ilisi.jobfinder.mapper.OffreMapper;
@@ -11,6 +12,10 @@ import com.ilisi.jobfinder.repository.OffreEmploiRepository;
 import com.ilisi.jobfinder.repository.UserRepository;
 import com.ilisi.jobfinder.repository.specification.OffreSpecification;
 import lombok.AllArgsConstructor;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.PrecisionModel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -101,7 +106,16 @@ private final UserRepository userRepository;
         return dtos;
     }
 
+    public List<OffreDTO> getOffresInRadius(double latitude,double longitude, double radius){
+        GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
+        Point point = geometryFactory.createPoint(new Coordinate(longitude,latitude));
+        List<OffreEmploi> offreEmplois = this.offremploiRepository.findOffresWithinRadius(point,radius);
+        List<OffreDTO> offreDTOS = offreEmplois.stream().map(
+                (OffreMapper::toDto)
+        ).toList();
 
+        return offreDTOS;
+    }
 
     private String calculateTimeAgo(LocalDateTime datePublication) {
         Duration duration = Duration.between(datePublication, LocalDateTime.now());
