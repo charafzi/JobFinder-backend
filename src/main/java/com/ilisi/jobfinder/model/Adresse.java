@@ -17,7 +17,7 @@ import org.locationtech.jts.geom.Point;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Entity
+@Entity(name = "adresse")
 @Builder
 public class Adresse {
     @Id
@@ -27,5 +27,5 @@ public class Adresse {
     private String adresse;
     @JsonSerialize(using = PointSerializer.class)
     @JsonDeserialize(using = PointDeserializer.class)
-    private Point coordiantes;
+    private Point coordinates;
 }
