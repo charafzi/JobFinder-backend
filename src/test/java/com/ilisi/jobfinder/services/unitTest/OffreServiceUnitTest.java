@@ -75,7 +75,7 @@ public class OffreServiceUnitTest {
     void testGetOffreById_Success() {
         // Arrange
         OffreEmploi offreEmploi = new OffreEmploi();
-        offreEmploi.setId(1);
+        offreEmploi.setId(1L);
         when(offremploiRepository.findById(1)).thenReturn(Optional.of(offreEmploi));
 
         // Act
@@ -90,7 +90,7 @@ public class OffreServiceUnitTest {
     void testUpdateOffre_Success() {
         // Arrange
         OffreEmploi existingOffre = new OffreEmploi();
-        existingOffre.setId(1);
+        existingOffre.setId(1L);
         existingOffre.setTitre("Ancien titre");
 
         OffreEmploi updatedOffre = new OffreEmploi();
