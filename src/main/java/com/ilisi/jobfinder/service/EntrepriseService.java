@@ -110,9 +110,9 @@ public class EntrepriseService {
         this.userService.deleteUserByEmail(email);
     }
 
-    public String uploadProfilePicture(String email, MultipartFile file) throws IOException {
+    public String uploadProfilePicture(Long id, MultipartFile file) throws IOException {
         // Retrieve the user from the database
-        User user = userService.getUserByEmail(email)
+        User user = userService.getUserById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         //ensure directory exists
@@ -120,7 +120,7 @@ public class EntrepriseService {
 
         try (Stream<Path> files = Files.list(storageLocation)) {
             files
-                    .filter(path -> path.getFileName().toString().startsWith("profile_" + email+ "_"))
+                    .filter(path -> path.getFileName().toString().startsWith("profile_" + id+ "_"))
                     .forEach(existingFile -> {
                         try {
                             Files.delete(existingFile);
@@ -142,7 +142,7 @@ public class EntrepriseService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
         String timestamp = now.format(formatter);
         // Construct the user profile URL with only the file extension
-        String userProfileUrl = "profile_" + email + "_" + timestamp + fileExtension;
+        String userProfileUrl = "profile_" + id + "_" + timestamp + fileExtension;
         Path filePath = storageLocation.resolve(userProfileUrl);
 
         //save file on server locally
@@ -154,8 +154,8 @@ public class EntrepriseService {
         return userProfileUrl;
     }
 
-    public byte[] getProfilePictureData(String email) throws IOException {
-        User user = userService.getUserByEmail(email)
+    public byte[] getProfilePictureData(Long id) throws IOException {
+        User user = userService.getUserById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         // Get the URL or file path of the stored image
