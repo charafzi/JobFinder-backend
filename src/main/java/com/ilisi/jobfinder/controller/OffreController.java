@@ -1,6 +1,26 @@
 package com.ilisi.jobfinder.controller;
 
+import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.corundumstudio.socketio.SocketIOServer;
+import com.corundumstudio.socketio.listener.ConnectListener;
+import com.corundumstudio.socketio.listener.DisconnectListener;
 import com.ilisi.jobfinder.dto.OffreEmploi.OffreDTO;
 import com.ilisi.jobfinder.dto.OffreEmploi.OffreSearchRequestDTO;
 import com.ilisi.jobfinder.dto.OffreEmploi.OffreSearchResponseDTO;
@@ -8,29 +28,46 @@ import com.ilisi.jobfinder.dto.OffreEmploi.PageResponse;
 import com.ilisi.jobfinder.mapper.OffreMapper;
 import com.ilisi.jobfinder.model.OffreEmploi;
 import com.ilisi.jobfinder.service.OffreEmploiService;
-import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import java.util.List;
 
+import jakarta.validation.Valid;
 
 @RestController
-@AllArgsConstructor
 @RequestMapping("/api/offre")
 public class OffreController {
+    private static final Logger log = LoggerFactory.getLogger(OffreController.class);
+    
+    @Autowired
     private final OffreEmploiService offreEmploiService;
+    @Autowired
+    private SocketIOServer socketServer;
+
+    private static final String OFFRE_CREATED_EVENT = "offre_created";
+    private static final String OFFRES_ROOM = "offres";
+
+    public OffreController(OffreEmploiService offreEmploiService, SocketIOServer socketServer){
+        this.offreEmploiService = offreEmploiService;
+        this.socketServer=socketServer;
+
+        // Enregistrement des écouteurs d'événements Socket.IO
+        this.socketServer.addConnectListener(onUserConnectWithSocket);     // Écouteur de connexion
+        this.socketServer.addDisconnectListener(onUserDisconnectWithSocket); // Écouteur de déconnexion
+    }
 
     @PostMapping
     public ResponseEntity<Void> createOffre(@Valid @RequestBody OffreDTO offreDTO) {
         try {
             OffreEmploi offre = OffreMapper.toEntity(offreDTO);
             offreEmploiService.create_Offre(offre);
-            return ResponseEntity.status(HttpStatus.CREATED).build(); // 201 Created
+
+            // Diffusion de la nouvelle offre aux clients dans la room 'offres'
+            OffreDTO createdOffre = OffreMapper.toDto(offre);
+            socketServer.getRoomOperations(OFFRES_ROOM).sendEvent(OFFRE_CREATED_EVENT, createdOffre);
+            log.warn("Offre created and broadcasted to room: " + OFFRES_ROOM);
+
+            return ResponseEntity.status(HttpStatus.CREATED).build();
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null); // 400 Bad Request
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
 
@@ -101,4 +138,21 @@ public class OffreController {
             return ResponseEntity.internalServerError().body(null);
         }
     }
+
+
+    /******************* Méthodes Socket.IO ********************/
+
+    /// Gestionnaire d'événement de connexion d'un client
+    public ConnectListener onUserConnectWithSocket = (client) -> {
+        // Ajout automatique du client à la room des offres lors de la connexion
+        client.joinRoom(OFFRES_ROOM);
+        log.info("Client {} connected and joined offers room", client.getSessionId());
+    };
+
+    /// Gestionnaire d'événement de déconnexion d'un client
+    public DisconnectListener onUserDisconnectWithSocket = (client) -> {
+        // Retrait du client de la room des offres lors de la déconnexion
+        client.leaveRoom(OFFRES_ROOM);
+        log.info("Client {} disconnected and left offers room", client.getSessionId());
+    };
 }

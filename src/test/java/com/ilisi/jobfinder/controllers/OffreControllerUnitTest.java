@@ -1,9 +1,11 @@
 package com.ilisi.jobfinder.controllers;
 
+import com.corundumstudio.socketio.SocketIOServer;
 import com.ilisi.jobfinder.Enum.ContratType;
 import com.ilisi.jobfinder.Enum.SortBy;
 import com.ilisi.jobfinder.Enum.SortDirection;
 import com.ilisi.jobfinder.Enum.StatusOffre;
+import com.ilisi.jobfinder.config.SocketIOConfig;
 import com.ilisi.jobfinder.controller.OffreController;
 import com.ilisi.jobfinder.dto.EntrepriseDTO;
 import com.ilisi.jobfinder.dto.OffreEmploi.OffreDTO;
@@ -37,10 +39,12 @@ class OffreControllerUnitTest {
 
     private OffreController offreController;
 
+    private SocketIOServer socketServer;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        offreController = new OffreController(offreEmploiService);
+        offreController = new OffreController(offreEmploiService,socketServer);
     }
 
     @Test
