@@ -17,6 +17,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 @NoArgsConstructor
 @Builder
 public class OffreDTO {
+    private Long id;
     private String title;
     private String description;
     private String position;
