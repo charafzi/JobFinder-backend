@@ -59,6 +59,15 @@ public class CandidatureService {
         String storagePath = "C:/Users/HP/Documents/UploadsCV_JobFinder";
         String filePath = storagePath + "/" + file.getOriginalFilename();
 
+        // Valider le type de fichier (PDF ou images JPEG, PNG)
+        String contentType = file.getContentType();
+        if (contentType == null ||
+                !(contentType.equals("application/pdf") ||
+                        contentType.equals("image/jpeg") ||
+                        contentType.equals("image/png"))) {
+            throw new RuntimeException("Format de fichier non pris en charge. Seuls les fichiers PDF, JPEG et PNG sont autorisés.");
+        }
+
         // Sauvegarder le fichier sur le disque
         Files.createDirectories(Paths.get(storagePath));
         Files.copy(file.getInputStream(), Paths.get(filePath), StandardCopyOption.REPLACE_EXISTING);
@@ -71,4 +80,5 @@ public class CandidatureService {
         document.setCandidat(candidat);
         documentRepository.save(document);
     }
+
 }
