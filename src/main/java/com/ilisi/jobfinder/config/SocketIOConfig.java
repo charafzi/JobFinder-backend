@@ -3,6 +3,7 @@ package com.ilisi.jobfinder.config;
 import com.corundumstudio.socketio.Configuration;
 import com.corundumstudio.socketio.SocketIOClient;
 import com.corundumstudio.socketio.SocketIOServer;
+import com.corundumstudio.socketio.Transport;
 import com.corundumstudio.socketio.listener.ConnectListener;
 import com.corundumstudio.socketio.listener.DisconnectListener;
 import com.corundumstudio.socketio.protocol.JacksonJsonSupport;
@@ -50,10 +51,13 @@ public class SocketIOConfig {
     @Bean
     public SocketIOServer socketIOServer() {
         Configuration config = new Configuration();
-        config.setHostname(SOCKETHOST);
+        config.setHostname("0.0.0.0");
         config.setPort(SOCKETPORT);
-
-        // Configuration de Jackson pour permettre la sérialisation correcte des types de date/heure Java 8
+        config.setOrigin("*");
+        config.setAllowCustomRequests(true);
+        config.setUpgradeTimeout(10000);
+        config.setTransports(Transport.WEBSOCKET, Transport.POLLING);
+        
         config.setJsonSupport(new JacksonJsonSupport(new JavaTimeModule()));
 
         server = new SocketIOServer(config);

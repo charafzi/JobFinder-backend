@@ -46,6 +46,7 @@ public class OffreMapper {
 
     public static OffreEmploi toEntity(OffreDTO dto) {
         OffreEmploi offre = new OffreEmploi();
+        offre.setId(offre.getId());
         offre.setTitre(dto.getTitle());
         offre.setDescription(dto.getDescription());
         offre.setPoste(dto.getPosition());
