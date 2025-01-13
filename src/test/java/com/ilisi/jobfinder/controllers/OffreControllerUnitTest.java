@@ -208,7 +208,7 @@ class OffreControllerUnitTest {
         // Arrange
         OffreSearchRequestDTO searchDTO = new OffreSearchRequestDTO();
         searchDTO.setKeyword("Java");
-        searchDTO.setTypeContrat(ContratType.CDI);
+        searchDTO.setTypeContrat(List.of(ContratType.CDI));
         searchDTO.setSalaryMin(40000.0);
         searchDTO.setSalaryMax(60000.0);
         searchDTO.setPage(0);
