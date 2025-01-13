@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface OffreEmploiRepository extends JpaRepository<OffreEmploi,Integer>, JpaSpecificationExecutor<OffreEmploi>{
+public interface OffreEmploiRepository extends JpaRepository<OffreEmploi,Long>, JpaSpecificationExecutor<OffreEmploi>{
 
     Page<OffreEmploi> findAll(Specification<OffreEmploi> spec, Pageable pageable);
 }
