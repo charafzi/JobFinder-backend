@@ -28,7 +28,7 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)// Disables CSRF protection to bypass errors during developement
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/auth/**","/api/offre/**","/api/entreprise/**","/api/candidat/**").permitAll() // Autoriser l'accès public/anonyme
+                        .requestMatchers("/api/auth/**","/api/offre/**","/api/entreprise/**","/api/candidat/**","/api/formation/**","/api/experience/**","/api/candidature/**").permitAll() // Autoriser l'accès public/anonyme
                         .anyRequest().authenticated() // Authentication required for all requests
                 )
                 .sessionManagement(session -> session

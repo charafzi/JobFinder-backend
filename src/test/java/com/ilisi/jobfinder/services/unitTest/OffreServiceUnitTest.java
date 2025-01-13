@@ -76,7 +76,7 @@ public class OffreServiceUnitTest {
         // Arrange
         OffreEmploi offreEmploi = new OffreEmploi();
         offreEmploi.setId(1L);
-        when(offremploiRepository.findById(1)).thenReturn(Optional.of(offreEmploi));
+        when(offremploiRepository.findById(1L)).thenReturn(Optional.of(offreEmploi));
 
         // Act
         Optional<OffreEmploi> result = offreEmploiService.getOffreById(1);

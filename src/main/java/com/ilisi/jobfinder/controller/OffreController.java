@@ -48,7 +48,7 @@ public class OffreController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<OffreDTO> getOffreById(@PathVariable int id) {
+    public ResponseEntity<OffreDTO> getOffreById(@PathVariable Long id) {
         try {
             return offreEmploiService.getOffreById(id)
                     .map(OffreMapper::toDto)
@@ -60,7 +60,7 @@ public class OffreController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<OffreDTO> updateOffre(@PathVariable int id, @RequestBody OffreDTO updatedOffreDTO) {
+    public ResponseEntity<OffreDTO> updateOffre(@PathVariable Long id, @RequestBody OffreDTO updatedOffreDTO) {
         try {
             OffreEmploi updatedOffre = OffreMapper.toEntity(updatedOffreDTO);
             OffreEmploi savedOffre = offreEmploiService.updateOffre(id, updatedOffre);
@@ -71,7 +71,7 @@ public class OffreController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteOffre(@PathVariable int id) {
+    public ResponseEntity<Void> deleteOffre(@PathVariable Long id) {
         try {
             offreEmploiService.deleteOffre(id);
             return ResponseEntity.noContent().build(); // 204 No Content
