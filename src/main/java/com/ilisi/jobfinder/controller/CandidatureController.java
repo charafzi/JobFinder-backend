@@ -1,8 +1,10 @@
 package com.ilisi.jobfinder.controller;
 
 
+import com.ilisi.jobfinder.Enum.CandidatureStatus;
 import com.ilisi.jobfinder.dto.Candidature.CandidatureDeleteRequest;
 import com.ilisi.jobfinder.dto.Candidature.CandidatureRequest;
+import com.ilisi.jobfinder.dto.Candidature.CandidatureStatusUpdateResquest;
 import com.ilisi.jobfinder.dto.CandidatureDTO;
 import com.ilisi.jobfinder.exceptions.OffreDejaPostule;
 import com.ilisi.jobfinder.service.CandidatureService;
@@ -64,6 +66,28 @@ public class CandidatureController {
         try {
             this.candidatureService.deleteCandidature(candidatureDeleteRequest);
             return ResponseEntity.noContent().build();
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/accept")
+    ResponseEntity<String> accpetCandidatureById(
+            @RequestBody CandidatureStatusUpdateResquest request){
+        try {
+            this.candidatureService.changeCandidatureStatus(request, CandidatureStatus.ACCEPTE);
+            return ResponseEntity.ok("Candidature acceptée avec succées");
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/dismiss")
+    ResponseEntity<String> dismissCandidatureById(
+            @RequestBody CandidatureStatusUpdateResquest request){
+        try {
+            this.candidatureService.changeCandidatureStatus(request, CandidatureStatus.REJETEE);
+            return ResponseEntity.ok("Candidature rejetée avec succées");
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
