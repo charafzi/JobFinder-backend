@@ -1,21 +1,29 @@
 package com.ilisi.jobfinder.dto;
 
+import com.ilisi.jobfinder.Enum.CandidatureStatus;
 import com.ilisi.jobfinder.model.Candidat;
 import com.ilisi.jobfinder.model.Candidature;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class CandidatureDTO {
+    private Long offreId;
     private CandidatureDTO.Candidat candidat;
+    @Enumerated(EnumType.STRING)
+    private CandidatureStatus status;
+    private LocalDateTime dateCandidature;
     private Long cvDocId;
     private Long lettreMotivationDocId;
-    private Long offreId;
 
     @Data
     @AllArgsConstructor

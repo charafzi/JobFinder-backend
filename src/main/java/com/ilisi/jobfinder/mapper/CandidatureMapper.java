@@ -42,6 +42,8 @@ public class CandidatureMapper {
         candidatureDTO.setOffreId(candidature.getOffreEmploi().getId());
         candidatureDTO.setCandidat(candidat);
         candidatureDTO.setCvDocId(candidature.getCv().getId());
+        candidatureDTO.setDateCandidature(candidature.getDateCandidature());
+        candidatureDTO.setStatus(candidature.getStatus());
         if(candidature.getLettreMotivation() != null){
             candidatureDTO.setLettreMotivationDocId(candidature.getLettreMotivation().getId());
         }
