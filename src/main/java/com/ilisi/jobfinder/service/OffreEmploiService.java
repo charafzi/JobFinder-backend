@@ -59,10 +59,10 @@ private final UserRepository userRepository;
     public List<OffreEmploi> getAllOffres(){
         return offremploiRepository.findAll();
     }
-    public Optional<OffreEmploi> getOffreById(int id){
+    public Optional<OffreEmploi> getOffreById(Long id){
         return offremploiRepository.findById(id);
     }
-    public OffreEmploi updateOffre(int id, OffreEmploi updatedOffre) {
+    public OffreEmploi updateOffre(Long id, OffreEmploi updatedOffre) {
         return offremploiRepository.findById(id).map(offre -> {
             offre.setTitre(updatedOffre.getTitre());
             offre.setDescription(updatedOffre.getDescription());
@@ -77,7 +77,7 @@ private final UserRepository userRepository;
         }).orElseThrow(() -> new RuntimeException("Offre non trouvée avec l'ID : " + id));
     }
 
-    public void deleteOffre(int id){
+    public void deleteOffre(Long id){
         //verifier si cette offre existe
         if(offremploiRepository.existsById(id)){
             // si oui supprimez le

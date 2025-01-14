@@ -1,11 +1,14 @@
 package com.ilisi.jobfinder.service;
 
+import com.ilisi.jobfinder.Enum.DocumentType;
 import com.ilisi.jobfinder.Enum.Role;
 import com.ilisi.jobfinder.dto.Auth.RegisterCandidatRequest;
+import com.ilisi.jobfinder.dto.DocumentDTO;
 import com.ilisi.jobfinder.exceptions.EmailAlreadyExists;
 import com.ilisi.jobfinder.model.Candidat;
-import com.ilisi.jobfinder.model.SecteurActivite;
 import com.ilisi.jobfinder.model.User;
+import com.ilisi.jobfinder.repository.CandidatRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,14 +21,16 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 @Service
 @AllArgsConstructor
 public class CandidatService {
     private final UserService userService;
+    private final CandidatRepository candidatRepository;
     private final PasswordEncoder passwordEncoder;
+    private final DocumentService documentService;
     private final String uploadDir = "src/main/java/com/ilisi/jobfinder/assets/candidatProfilePic";
     private final Path storageLocation = Paths.get(System.getProperty("user.dir"), uploadDir);
 
@@ -108,5 +113,26 @@ public class CandidatService {
         return Files.readAllBytes(imagePath);
     }
 
+    public void uploadDocument(String email, MultipartFile file, DocumentType type) throws IOException, EntityNotFoundException, RuntimeException{
+        Optional<User> user = userService.getUserByEmail(email);
+
+        if(user.isEmpty()){
+            throw new EntityNotFoundException("Candidat with email = "+email+" not found");
+        }
+        Candidat candidat = (Candidat) user.get();
+
+        try {
+            this.documentService.saveDocument(candidat, file, type);
+        } catch (IOException e) {
+            throw new RuntimeException("Erreur lors de sauvegardement du ficher.");
+        }
+        catch (RuntimeException e){
+            throw e;
+        }
+    }
+
+    public DocumentDTO getDocumentById(Long id) throws IOException {
+        return this.documentService.getDocumentById(id);
+    }
 }
 

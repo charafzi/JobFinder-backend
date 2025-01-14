@@ -24,7 +24,7 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)// Disables CSRF protection to bypass errors during developement
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/auth/**","/api/offre/**","/api/entreprise/**","/api/candidat/**","/socket.io/**", "/ws/**").permitAll() // Autoriser l'accès public/anonyme
+                        .requestMatchers("/api/auth/**","/api/offre/**","/api/entreprise/**","/api/candidat/**","/socket.io/**", "/ws/**","/api/formation/**","/api/experience/**","/api/candidature/**").permitAll() // Autoriser l'accès public/anonyme
                         .anyRequest().authenticated() // Authentication required for all requests
                 )
                 .sessionManagement(session -> session
@@ -32,22 +32,22 @@ public class SecurityConfig {
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
-                // CORS configuration
-                http.cors(cors -> {
-                    cors.configurationSource(request -> {
-                        CorsConfiguration config = new CorsConfiguration();
-                        config.addAllowedOriginPattern("*");
-                        config.addAllowedMethod("*");
-                        config.addAllowedHeader("*");
-                        config.setAllowCredentials(true);
-                        return config;
-                    });
-                });
+        // CORS configuration
+        http.cors(cors -> {
+            cors.configurationSource(request -> {
+                CorsConfiguration config = new CorsConfiguration();
+                config.addAllowedOriginPattern("*");
+                config.addAllowedMethod("*");
+                config.addAllowedHeader("*");
+                config.setAllowCredentials(true);
+                return config;
+            });
+        });
 
-                // Allow WebSocket handshake requests
-                http.headers(headers -> headers
-                        .frameOptions(frameOptions -> frameOptions.disable())
-                );
+        // Allow WebSocket handshake requests
+        http.headers(headers -> headers
+                .frameOptions(frameOptions -> frameOptions.disable())
+        );
         return http.build();
     }
 }

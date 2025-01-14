@@ -118,10 +118,10 @@ class OffreControllerUnitTest {
         entreprise.setNom("Test company");
         entreprise.setEmail("test@gmail.com");
         offre.setEntreprise(entreprise);
-        when(offreEmploiService.getOffreById(1)).thenReturn(Optional.of(offre));
+        when(offreEmploiService.getOffreById(1L)).thenReturn(Optional.of(offre));
 
         // Act
-        ResponseEntity<OffreDTO> response = offreController.getOffreById(1);
+        ResponseEntity<OffreDTO> response = offreController.getOffreById(1L);
 
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -131,10 +131,10 @@ class OffreControllerUnitTest {
     @Test
     void testGetOffreById_NotFound() {
         // Arrange
-        when(offreEmploiService.getOffreById(1)).thenReturn(Optional.empty());
+        when(offreEmploiService.getOffreById(1L)).thenReturn(Optional.empty());
 
         // Act
-        ResponseEntity<OffreDTO> response = offreController.getOffreById(1);
+        ResponseEntity<OffreDTO> response = offreController.getOffreById(1L);
 
         // Assert
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -153,10 +153,10 @@ class OffreControllerUnitTest {
         entreprise.setNom("Test company");
         entreprise.setEmail("test@gmail.com");
         savedOffre.setEntreprise(entreprise);
-        when(offreEmploiService.updateOffre(eq(1), any(OffreEmploi.class))).thenReturn(savedOffre);
+        when(offreEmploiService.updateOffre((long) eq(1), any(OffreEmploi.class))).thenReturn(savedOffre);
 
         // Act
-        ResponseEntity<OffreDTO> response = offreController.updateOffre(1, updatedOffreDTO);
+        ResponseEntity<OffreDTO> response = offreController.updateOffre(1L, updatedOffreDTO);
 
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -167,11 +167,11 @@ class OffreControllerUnitTest {
     void testUpdateOffre_NotFound() {
         // Arrange
         OffreDTO updatedOffreDTO = new OffreDTO();
-        when(offreEmploiService.updateOffre(eq(1), any(OffreEmploi.class)))
+        when(offreEmploiService.updateOffre((long) eq(1), any(OffreEmploi.class)))
                 .thenThrow(new RuntimeException("Offre not found"));
 
         // Act
-        ResponseEntity<OffreDTO> response = offreController.updateOffre(1, updatedOffreDTO);
+        ResponseEntity<OffreDTO> response = offreController.updateOffre(1L, updatedOffreDTO);
 
         // Assert
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -180,24 +180,24 @@ class OffreControllerUnitTest {
     @Test
     void testDeleteOffre_Success() {
         // Arrange
-        doNothing().when(offreEmploiService).deleteOffre(1);
+        doNothing().when(offreEmploiService).deleteOffre(1L);
 
         // Act
-        ResponseEntity<Void> response = offreController.deleteOffre(1);
+        ResponseEntity<Void> response = offreController.deleteOffre(1L);
 
         // Assert
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-        verify(offreEmploiService).deleteOffre(1);
+        verify(offreEmploiService).deleteOffre(1L);
     }
 
     @Test
     void testDeleteOffre_NotFound() {
         // Arrange
         doThrow(new RuntimeException("Offre not found"))
-                .when(offreEmploiService).deleteOffre(1);
+                .when(offreEmploiService).deleteOffre(1L);
 
         // Act
-        ResponseEntity<Void> response = offreController.deleteOffre(1);
+        ResponseEntity<Void> response = offreController.deleteOffre(1L);
 
         // Assert
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());

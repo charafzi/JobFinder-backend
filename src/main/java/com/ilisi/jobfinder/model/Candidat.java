@@ -1,10 +1,10 @@
 package com.ilisi.jobfinder.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -20,4 +20,10 @@ public class Candidat extends User {
     @OneToMany(mappedBy = "candidat")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<Candidature> candidatures;
+    @OneToMany(mappedBy = "candidat", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Formation> formations;
+    @OneToMany(mappedBy = "candidat", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Experience> experiences;
+    @OneToMany(mappedBy ="candidat", cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<Document> documents;
 }
