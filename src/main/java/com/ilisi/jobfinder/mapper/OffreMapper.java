@@ -28,6 +28,7 @@ public class OffreMapper {
 
     public static OffreSearchResponseDTO toOffreSearchResponseDTO(OffreEmploi offreEmploi){
         OffreSearchResponseDTO dto = OffreSearchResponseDTO.builder()
+                .id(offreEmploi.getId())
                 .title(offreEmploi.getTitre())
                 .description(offreEmploi.getDescription())
                 .position(offreEmploi.getPoste())
@@ -46,7 +47,6 @@ public class OffreMapper {
 
     public static OffreEmploi toEntity(OffreDTO dto) {
         OffreEmploi offre = new OffreEmploi();
-        offre.setId(offre.getId());
         offre.setTitre(dto.getTitle());
         offre.setDescription(dto.getDescription());
         offre.setPoste(dto.getPosition());
