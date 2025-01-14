@@ -17,7 +17,7 @@ import java.util.List;
 public class Candidat extends User {
     private String prenom;
     private String nom;
-    @OneToMany(mappedBy = "candidat")
+    @OneToMany(mappedBy = "candidat",cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<Candidature> candidatures;
     @OneToMany(mappedBy = "candidat", cascade = CascadeType.ALL, orphanRemoval = true)

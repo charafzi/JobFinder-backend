@@ -1,6 +1,7 @@
 package com.ilisi.jobfinder.controller;
 
 
+import com.ilisi.jobfinder.dto.Candidature.CandidatureDeleteRequest;
 import com.ilisi.jobfinder.dto.Candidature.CandidatureRequest;
 import com.ilisi.jobfinder.dto.CandidatureDTO;
 import com.ilisi.jobfinder.exceptions.OffreDejaPostule;
@@ -56,11 +57,15 @@ public class CandidatureController {
         }
     }
 
-    /*@DeleteMapping("")
-    public ResponseEntity<List<CandidatureDTO>> deleteCandidatureByUser(
-            @RequestParam String email,
-            @RequestParam Long offreId
-    ){
-        this.candidatureService.deleteCandidature(email,offreId);
-    }*/
+    @DeleteMapping("/")
+    public ResponseEntity<?> deleteCandidatureByUser(
+            @RequestBody CandidatureDeleteRequest candidatureDeleteRequest
+            ){
+        try {
+            this.candidatureService.deleteCandidature(candidatureDeleteRequest);
+            return ResponseEntity.noContent().build();
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
 }
