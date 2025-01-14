@@ -9,15 +9,14 @@ import org.springframework.web.multipart.MultipartFile;
 @Data
 @AllArgsConstructor
 public class CandidatureRequest {
-    @NotNull(message = "L'ID du candidat est obligatoire.")
-    private Long candidatId;
+    @NotNull(message = "L'email du candidat est obligatoire.")
+    private String email;
 
     @NotNull(message = "L'ID de l'offre d'emploi est obligatoire.")
     private Long offreId;
 
-    @NotNull(message = "Le type de document est obligatoire.")
-    private DocumentType documentType; // CV ou LETTRE_MOTIVATION
+    private Long cvId;                      // Pour sélectionner un CV existant
+    private MultipartFile newCv;            // Pour uploader un nouveau CV
+    private MultipartFile lettreMotivation;  // Pour la lettre de motivation
 
-    @NotNull(message = "Le document est obligatoire.")
-    private MultipartFile document; // Le fichier associé (CV ou lettre)
 }
