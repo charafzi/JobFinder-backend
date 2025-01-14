@@ -24,7 +24,7 @@ public class DocumentService {
     private final String uploadDir = "src/main/java/com/ilisi/jobfinder/assets/document";
     private final Path storageLocation = Paths.get(System.getProperty("user.dir"), uploadDir);
 
-    public void saveDocument(Candidat candidat, MultipartFile file, DocumentType type) throws IOException, RuntimeException{
+    public Document saveDocument(Candidat candidat, MultipartFile file, DocumentType type) throws IOException, RuntimeException{
         // Créer l'entité Document
         String filePath = "";
         try {
@@ -40,7 +40,13 @@ public class DocumentService {
         document.setFileType(type);
         document.setUploadDate(LocalDateTime.now());
         document.setCandidat(candidat);
-        documentRepository.save(document);
+        return documentRepository.save(document);
+    }
+
+    public Document getDocumentEntityById(Long id) throws IOException {
+        Document doc = documentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Document introuvable avec l'id: " + id));
+        return doc;
     }
 
     public DocumentDTO getDocumentById(Long id) throws IOException {

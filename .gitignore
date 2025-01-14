@@ -4,6 +4,9 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+#assets
+#src/main/java/com/ilisi/jobfinder/assets
+
 ### STS ###
 .apt_generated
 .classpath

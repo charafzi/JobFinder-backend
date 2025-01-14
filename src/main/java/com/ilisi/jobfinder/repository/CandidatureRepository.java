@@ -7,11 +7,12 @@ import com.ilisi.jobfinder.model.OffreEmploi;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface CandidatureRepository extends JpaRepository<Candidature, CandidatureId> {
 
     Optional<Candidature> findByCandidatAndOffreEmploi(Candidat candidat, OffreEmploi offreEmploi);
-
+    List<Candidature> findCandidaturesByOffreEmploiId(Long offreId);
 }
