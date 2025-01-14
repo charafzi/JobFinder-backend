@@ -1,5 +1,6 @@
 package com.ilisi.jobfinder.mapper;
 
+import com.ilisi.jobfinder.Enum.Role;
 import com.ilisi.jobfinder.dto.EntrepriseDTO;
 import com.ilisi.jobfinder.model.Entreprise;
 
@@ -14,6 +15,7 @@ public class EntrepriseMapper {
                 .profilePicture(entity.getPhotoProfile())
                 .phoneNumber(entity.getTelephone())
                 .activitySectors(entity.getSecteurActivites())
+                .role(Role.ENTREPRISE)
                 .about(entity.getAbout())
                 .build();
     }
