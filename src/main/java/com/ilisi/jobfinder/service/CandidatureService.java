@@ -2,6 +2,7 @@ package com.ilisi.jobfinder.service;
 
 import com.ilisi.jobfinder.Enum.CandidatureStatus;
 import com.ilisi.jobfinder.Enum.DocumentType;
+import com.ilisi.jobfinder.dto.Candidature.CandidatureDeleteRequest;
 import com.ilisi.jobfinder.dto.Candidature.CandidatureRequest;
 import com.ilisi.jobfinder.dto.CandidatureDTO;
 import com.ilisi.jobfinder.exceptions.OffreDejaPostule;
@@ -101,15 +102,22 @@ public class CandidatureService {
         return candidatures.stream().map(CandidatureMapper::toDto).toList();
     }
 
-    public void deleteCandidature(String email, Long offreId) throws EntityNotFoundException {
+    public void deleteCandidature(CandidatureDeleteRequest request) throws EntityNotFoundException {
         // Vérifier si le candidat existe
-        Candidat candidat = candidatRepository.findByEmail(email)
+        Candidat candidat = candidatRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new EntityNotFoundException("Candidat introuvable."));
 
-        // Vérifier si l'offre existe
-        OffreEmploi offre = offreEmploiRepository.findById(offreId)
-                .orElseThrow(() -> new EntityNotFoundException("Offre introuvable."));
+        Candidature candidature = candidat.getCandidatures()
+                .stream()
+                .filter(candid -> candid.getOffreEmploi().getId().equals(request.getOffreId()))
+                .findFirst()
+                .orElse(null);
 
-        //this.candidatureRepository
+        if(candidature == null){
+            throw new EntityNotFoundException("Candidature introuvable pour offre ="+request.getOffreId());
+        }
+
+        candidat.getCandidatures().remove(candidature);
+        candidatRepository.save(candidat);
     }
 }
