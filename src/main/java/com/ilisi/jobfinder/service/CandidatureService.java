@@ -91,4 +91,25 @@ public class CandidatureService {
         List<Candidature> candidatures = this.candidatureRepository.findCandidaturesByOffreEmploiId(offreId);
         return candidatures.stream().map(CandidatureMapper::toDto).toList();
     }
+
+    public List<CandidatureDTO> getAllCandidaturesByUser(String email) throws EntityNotFoundException{
+        // Vérifier si le candidat existe
+        Candidat candidat = candidatRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("Candidat introuvable."));
+
+        List<Candidature> candidatures = candidat.getCandidatures();
+        return candidatures.stream().map(CandidatureMapper::toDto).toList();
+    }
+
+    public void deleteCandidature(String email, Long offreId) throws EntityNotFoundException {
+        // Vérifier si le candidat existe
+        Candidat candidat = candidatRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("Candidat introuvable."));
+
+        // Vérifier si l'offre existe
+        OffreEmploi offre = offreEmploiRepository.findById(offreId)
+                .orElseThrow(() -> new EntityNotFoundException("Offre introuvable."));
+
+        //this.candidatureRepository
+    }
 }
