@@ -45,4 +45,22 @@ public class CandidatureController {
         List<CandidatureDTO> candidatureDTOS = this.candidatureService.getAllCandidaturesByOffre(offreId);
         return ResponseEntity.ok().body(candidatureDTOS);
     }
+
+    @GetMapping("/candidat/{email}")
+    public ResponseEntity<List<CandidatureDTO>> getAllCandidaturesByUser(@PathVariable String email){
+        try {
+            List<CandidatureDTO> candidatureDTOS = this.candidatureService.getAllCandidaturesByUser(email);
+            return ResponseEntity.ok().body(candidatureDTOS);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    /*@DeleteMapping("")
+    public ResponseEntity<List<CandidatureDTO>> deleteCandidatureByUser(
+            @RequestParam String email,
+            @RequestParam Long offreId
+    ){
+        this.candidatureService.deleteCandidature(email,offreId);
+    }*/
 }
