@@ -3,10 +3,7 @@ package com.ilisi.jobfinder.service;
 import com.ilisi.jobfinder.Enum.DocumentType;
 import com.ilisi.jobfinder.dto.Candidature.CandidatureRequest;
 import com.ilisi.jobfinder.mapper.CandidatureMapper;
-import com.ilisi.jobfinder.model.Candidat;
-import com.ilisi.jobfinder.model.Candidature;
-import com.ilisi.jobfinder.model.Document;
-import com.ilisi.jobfinder.model.OffreEmploi;
+import com.ilisi.jobfinder.model.*;
 import com.ilisi.jobfinder.repository.CandidatRepository;
 import com.ilisi.jobfinder.repository.CandidatureRepository;
 import com.ilisi.jobfinder.repository.DocumentRepository;
@@ -18,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
@@ -29,6 +27,7 @@ public class CandidatureService {
     private final OffreEmploiRepository offreEmploiRepository;
     private final CandidatureRepository candidatureRepository;
     private final DocumentRepository documentRepository;
+
 
     public void postuler(CandidatureRequest request) {
         // Vérifier si le candidat existe
@@ -44,41 +43,17 @@ public class CandidatureService {
         }
 
         // Sauvegarder le document (CV ou lettre)
-        try {
-            saveDocument(candidat, request.getDocument(), request.getDocumentType());
+        /*try {
+            saveDocument(candidat,request.getOffreId(), request.getDocument(), request.getDocumentType());
         } catch (IOException e) {
             throw new RuntimeException("Erreur lors de la sauvegarde du fichier : " + e.getMessage());
-        }
+        }*/
 
         // Créer et sauvegarder la candidature
         Candidature candidature = CandidatureMapper.toCandidature(request);
         candidatureRepository.save(candidature);
     }
 
-    private void saveDocument(Candidat candidat, MultipartFile file, DocumentType type) throws IOException {
-        String storagePath = "C:/Users/HP/Documents/UploadsCV_JobFinder";
-        String filePath = storagePath + "/" + file.getOriginalFilename();
 
-        // Valider le type de fichier (PDF ou images JPEG, PNG)
-        String contentType = file.getContentType();
-        if (contentType == null ||
-                !(contentType.equals("application/pdf") ||
-                        contentType.equals("image/jpeg") ||
-                        contentType.equals("image/png"))) {
-            throw new RuntimeException("Format de fichier non pris en charge. Seuls les fichiers PDF, JPEG et PNG sont autorisés.");
-        }
-
-        // Sauvegarder le fichier sur le disque
-        Files.createDirectories(Paths.get(storagePath));
-        Files.copy(file.getInputStream(), Paths.get(filePath), StandardCopyOption.REPLACE_EXISTING);
-
-        // Créer l'entité Document
-        Document document = new Document();
-        document.setFilePath(filePath);
-        document.setFileType(type);
-        document.setUploadDate(LocalDateTime.now());
-        document.setCandidat(candidat);
-        documentRepository.save(document);
-    }
 
 }
