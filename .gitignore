@@ -5,7 +5,7 @@ target/
 !**/src/test/**/target/
 
 #assets
-#src/main/java/com/ilisi/jobfinder/assets
+src/main/java/com/ilisi/jobfinder/assets
 
 ### STS ###
 .apt_generated
