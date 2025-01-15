@@ -3,6 +3,7 @@ package com.ilisi.jobfinder.dto.OffreEmploi;
 import com.ilisi.jobfinder.Enum.ContratType;
 import com.ilisi.jobfinder.Enum.StatusOffre;
 import com.ilisi.jobfinder.dto.AdresseDTO;
+import com.ilisi.jobfinder.dto.EntrepriseDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -32,6 +33,17 @@ public class OffreDTO {
     private LocalDateTime deadlineDate;
 
     private StatusOffre status;
-    private Long companyId;
+    private OffreDTO.Entreprise company;
     private AdresseDTO adress;
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class Entreprise{
+        private Long id;
+        private String email;
+        private String phoneNumber;
+        private String name;
+    }
 }
