@@ -13,6 +13,7 @@ import java.util.List;
 @Builder
 @Data
 public class OffreSearchResponseDTO {
+    private Long id;
     private String title;
     private String description;
     private String position;

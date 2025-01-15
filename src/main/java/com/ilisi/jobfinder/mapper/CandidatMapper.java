@@ -1,5 +1,6 @@
 package com.ilisi.jobfinder.mapper;
 
+import com.ilisi.jobfinder.Enum.Role;
 import com.ilisi.jobfinder.dto.CandidatDTO;
 import com.ilisi.jobfinder.dto.EntrepriseDTO;
 import com.ilisi.jobfinder.model.Candidat;
@@ -13,6 +14,7 @@ public class CandidatMapper {
                 .lastName(entity.getNom())
                 .profilePicture(entity.getPhotoProfile())
                 .phoneNumber(entity.getTelephone())
+                .role(Role.CANDIDAT)
                 .build();
     }
 }

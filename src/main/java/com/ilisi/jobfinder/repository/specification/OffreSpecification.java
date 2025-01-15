@@ -1,13 +1,10 @@
 package com.ilisi.jobfinder.repository.specification;
 
+import com.ilisi.jobfinder.Enum.ContratType;
 import com.ilisi.jobfinder.Enum.StatusOffre;
 import com.ilisi.jobfinder.dto.OffreEmploi.OffreSearchRequestDTO;
 import com.ilisi.jobfinder.model.OffreEmploi;
-import jakarta.persistence.criteria.JoinType;
-import jakarta.persistence.criteria.ListJoin;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
-import jakarta.persistence.criteria.Subquery;
+import jakarta.persistence.criteria.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -33,8 +30,12 @@ public class OffreSpecification {
                 ));
             }
 
-            if (searchDTO.getTypeContrat() != null) {
-                predicates.add(cb.equal(root.get("typeContrat"), searchDTO.getTypeContrat()));
+            if (searchDTO.getTypeContrat() != null && !searchDTO.getTypeContrat().isEmpty()) {
+                CriteriaBuilder.In<String> inClause = cb.in(root.get("typeContrat"));
+                for (ContratType type : searchDTO.getTypeContrat()) {
+                    inClause.value(type.name());
+                }
+                predicates.add(inClause);
             }
 
             if (searchDTO.getSalaryMin() != null) {

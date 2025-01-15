@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Data
@@ -30,4 +31,12 @@ public class Candidature {
     private CandidatureStatus status;
 
     private LocalDateTime dateCandidature;
+
+    @ManyToOne
+    @JoinColumn(name = "cv_id", nullable = false) // CV obligatoire
+    private Document cv;
+
+    @ManyToOne
+    @JoinColumn(name = "lettre_motivation_id")
+    private Document lettreMotivation;
 }

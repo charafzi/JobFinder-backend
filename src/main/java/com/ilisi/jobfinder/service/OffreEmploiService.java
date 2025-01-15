@@ -1,6 +1,7 @@
 package com.ilisi.jobfinder.service;
 
 
+import com.ilisi.jobfinder.dto.OffreEmploi.OffreDTO;
 import com.ilisi.jobfinder.dto.OffreEmploi.OffreSearchRequestDTO;
 import com.ilisi.jobfinder.dto.OffreEmploi.OffreSearchResponseDTO;
 import com.ilisi.jobfinder.mapper.OffreMapper;
@@ -11,6 +12,10 @@ import com.ilisi.jobfinder.repository.OffreEmploiRepository;
 import com.ilisi.jobfinder.repository.UserRepository;
 import com.ilisi.jobfinder.repository.specification.OffreSpecification;
 import lombok.AllArgsConstructor;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.PrecisionModel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -54,10 +59,10 @@ private final UserRepository userRepository;
     public List<OffreEmploi> getAllOffres(){
         return offremploiRepository.findAll();
     }
-    public Optional<OffreEmploi> getOffreById(int id){
+    public Optional<OffreEmploi> getOffreById(Long id){
         return offremploiRepository.findById(id);
     }
-    public OffreEmploi updateOffre(int id, OffreEmploi updatedOffre) {
+    public OffreEmploi updateOffre(Long id, OffreEmploi updatedOffre) {
         return offremploiRepository.findById(id).map(offre -> {
             offre.setTitre(updatedOffre.getTitre());
             offre.setDescription(updatedOffre.getDescription());
@@ -72,7 +77,7 @@ private final UserRepository userRepository;
         }).orElseThrow(() -> new RuntimeException("Offre non trouvée avec l'ID : " + id));
     }
 
-    public void deleteOffre(int id){
+    public void deleteOffre(Long id){
         //verifier si cette offre existe
         if(offremploiRepository.existsById(id)){
             // si oui supprimez le
@@ -101,7 +106,16 @@ private final UserRepository userRepository;
         return dtos;
     }
 
+    public List<OffreDTO> getOffresInRadius(double latitude,double longitude, double radius){
+        GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
+        Point point = geometryFactory.createPoint(new Coordinate(longitude,latitude));
+        List<OffreEmploi> offreEmplois = this.offremploiRepository.findOffresWithinRadius(point,radius);
+        List<OffreDTO> offreDTOS = offreEmplois.stream().map(
+                (OffreMapper::toDto)
+        ).toList();
 
+        return offreDTOS;
+    }
 
     private String calculateTimeAgo(LocalDateTime datePublication) {
         Duration duration = Duration.between(datePublication, LocalDateTime.now());

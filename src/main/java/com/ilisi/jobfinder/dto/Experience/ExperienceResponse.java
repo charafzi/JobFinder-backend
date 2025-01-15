@@ -1,0 +1,15 @@
+package com.ilisi.jobfinder.dto.Experience;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+import java.time.LocalDate;
+
+@Data
+@AllArgsConstructor
+public class ExperienceResponse {
+    private String poste;
+    private LocalDate dateDebut;
+    private LocalDate dateFin;
+    private Long candidatId;
+}
