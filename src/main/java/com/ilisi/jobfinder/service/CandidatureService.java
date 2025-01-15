@@ -2,6 +2,7 @@ package com.ilisi.jobfinder.service;
 
 import com.ilisi.jobfinder.Enum.CandidatureStatus;
 import com.ilisi.jobfinder.Enum.DocumentType;
+import com.ilisi.jobfinder.dto.Candidature.CandidatureCandidatDTO;
 import com.ilisi.jobfinder.dto.Candidature.CandidatureDeleteRequest;
 import com.ilisi.jobfinder.dto.Candidature.CandidatureRequest;
 import com.ilisi.jobfinder.dto.Candidature.CandidatureStatusUpdateResquest;
@@ -95,13 +96,13 @@ public class CandidatureService {
         return candidatures.stream().map(CandidatureMapper::toDto).toList();
     }
 
-    public List<CandidatureDTO> getAllCandidaturesByUser(String email) throws EntityNotFoundException{
+    public List<CandidatureCandidatDTO> getAllCandidaturesByUser(String email) throws EntityNotFoundException{
         // Vérifier si le candidat existe
         Candidat candidat = candidatRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("Candidat introuvable."));
 
         List<Candidature> candidatures = candidat.getCandidatures();
-        return candidatures.stream().map(CandidatureMapper::toDto).toList();
+        return candidatures.stream().map(CandidatureMapper::toCandidatureCandidatDTO).toList();
     }
 
     public void deleteCandidature(CandidatureDeleteRequest request) throws EntityNotFoundException {
