@@ -28,7 +28,9 @@ public class OffreEmploi {
     @Enumerated(EnumType.STRING)
     private ContratType typeContrat;
     private double salaire;
+    @Column(nullable = false)
     private LocalDateTime datePublication;
+    @Column(nullable = false)
     private LocalDateTime dateLimite;
     @Enumerated(EnumType.STRING)
     private StatusOffre statusOffre;

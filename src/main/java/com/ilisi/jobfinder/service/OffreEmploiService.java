@@ -1,6 +1,7 @@
 package com.ilisi.jobfinder.service;
 
 
+import com.ilisi.jobfinder.Enum.StatusOffre;
 import com.ilisi.jobfinder.dto.OffreEmploi.GetOffresByEntrepriseIdDTO;
 import com.ilisi.jobfinder.dto.OffreEmploi.OffreDTO;
 import com.ilisi.jobfinder.dto.OffreEmploi.OffreSearchRequestDTO;
@@ -54,6 +55,12 @@ private final UserRepository userRepository;
 
         // Associez l'entreprise à l'offre
         offreEmploi.setEntreprise((Entreprise) user);
+
+        // Définir la date de publication à la date actuelle
+        offreEmploi.setDatePublication(LocalDateTime.now());
+
+        // Définir le statut par défaut à "active"
+        offreEmploi.setStatusOffre(StatusOffre.active);
 
         // Sauvegardez l'offre
         return offremploiRepository.save(offreEmploi);
