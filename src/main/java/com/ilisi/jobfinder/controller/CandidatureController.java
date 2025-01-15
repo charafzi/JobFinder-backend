@@ -7,6 +7,7 @@ import com.ilisi.jobfinder.dto.Candidature.CandidatureDeleteRequest;
 import com.ilisi.jobfinder.dto.Candidature.CandidatureRequest;
 import com.ilisi.jobfinder.dto.Candidature.CandidatureStatusUpdateResquest;
 import com.ilisi.jobfinder.dto.CandidatureDTO;
+import com.ilisi.jobfinder.dto.OffreEmploi.PageResponse;
 import com.ilisi.jobfinder.exceptions.OffreDejaPostule;
 import com.ilisi.jobfinder.service.CandidatureService;
 import jakarta.persistence.EntityNotFoundException;
@@ -50,11 +51,15 @@ public class CandidatureController {
         return ResponseEntity.ok().body(candidatureDTOS);
     }
 
-    @GetMapping("/candidat/{email}")
-    public ResponseEntity<List<CandidatureCandidatDTO>> getAllCandidaturesByUser(@PathVariable String email){
+    @GetMapping("/")
+    public ResponseEntity<PageResponse<CandidatureCandidatDTO>> getAllCandidaturesByUser(
+            @RequestParam Long id,
+            @RequestParam int page,
+            @RequestParam int size
+    ){
         try {
-            List<CandidatureCandidatDTO> candidatureDTOS = this.candidatureService.getAllCandidaturesByUser(email);
-            return ResponseEntity.ok().body(candidatureDTOS);
+            PageResponse<CandidatureCandidatDTO> result= this.candidatureService.getAllCandidaturesByUser(id,page,size);
+            return ResponseEntity.ok().body(result);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
