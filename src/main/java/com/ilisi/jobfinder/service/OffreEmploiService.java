@@ -1,6 +1,7 @@
 package com.ilisi.jobfinder.service;
 
 
+import com.ilisi.jobfinder.dto.OffreEmploi.GetOffresByEntrepriseIdDTO;
 import com.ilisi.jobfinder.dto.OffreEmploi.OffreDTO;
 import com.ilisi.jobfinder.dto.OffreEmploi.OffreSearchRequestDTO;
 import com.ilisi.jobfinder.dto.OffreEmploi.OffreSearchResponseDTO;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -115,6 +117,18 @@ private final UserRepository userRepository;
         ).toList();
 
         return offreDTOS;
+    }
+
+    public Page<OffreSearchResponseDTO> getOffresByCompanyId(GetOffresByEntrepriseIdDTO searchDTO) {
+        Sort sort = Sort.by(Sort.Direction.valueOf(searchDTO.getSortDirection().toString()), searchDTO.getSortBy().getField());
+        Pageable pageable = PageRequest.of(searchDTO.getPage(), searchDTO.getSize(), sort);
+        Page<OffreEmploi> offres = offremploiRepository.findByEntrepriseId(searchDTO.getEntrepriseId(), pageable);
+        Page<OffreSearchResponseDTO> dtos = offres.map(offre -> {
+            OffreSearchResponseDTO dto = OffreMapper.toOffreSearchResponseDTO(offre);
+            dto.setTimeAgo(this.calculateTimeAgo(dto.getPublicationDate()));
+            return dto;
+        });
+        return dtos;
     }
 
     private String calculateTimeAgo(LocalDateTime datePublication) {

@@ -25,4 +25,6 @@ public interface OffreEmploiRepository extends JpaRepository<OffreEmploi,Long>, 
             "and o.adresse_adresse_id = a.adresse_id"
             ,nativeQuery = true)
     List<OffreEmploi> findOffresWithinRadius(Point p,double radius);
+
+    Page<OffreEmploi> findByEntrepriseId(Long entrepriseId, Pageable pageable);
 }
