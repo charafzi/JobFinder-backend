@@ -76,10 +76,10 @@ public class OffreServiceUnitTest {
         // Arrange
         OffreEmploi offreEmploi = new OffreEmploi();
         offreEmploi.setId(1L);
-        when(offremploiRepository.findById(1)).thenReturn(Optional.of(offreEmploi));
+        when(offremploiRepository.findById(1L)).thenReturn(Optional.of(offreEmploi));
 
         // Act
-        Optional<OffreEmploi> result = offreEmploiService.getOffreById(1);
+        Optional<OffreEmploi> result = offreEmploiService.getOffreById(1L);
 
         // Assert
         assertTrue(result.isPresent());
@@ -96,11 +96,11 @@ public class OffreServiceUnitTest {
         OffreEmploi updatedOffre = new OffreEmploi();
         updatedOffre.setTitre("Nouveau titre");
 
-        when(offremploiRepository.findById(1)).thenReturn(Optional.of(existingOffre));
+        when(offremploiRepository.findById(1L)).thenReturn(Optional.of(existingOffre));
         when(offremploiRepository.save(any(OffreEmploi.class))).thenReturn(updatedOffre);
 
         // Act
-        OffreEmploi result = offreEmploiService.updateOffre(1, updatedOffre);
+        OffreEmploi result = offreEmploiService.updateOffre(1L, updatedOffre);
 
         // Assert
         assertNotNull(result);
@@ -111,22 +111,22 @@ public class OffreServiceUnitTest {
     @Test
     void testDeleteOffre_Success() {
         // Arrange
-        when(offremploiRepository.existsById(1)).thenReturn(true);
+        when(offremploiRepository.existsById(1L)).thenReturn(true);
 
         // Act
-        offreEmploiService.deleteOffre(1);
+        offreEmploiService.deleteOffre(1L);
 
         // Assert
-        verify(offremploiRepository).deleteById(1);
+        verify(offremploiRepository).deleteById(1L);
     }
 
     @Test
     void testDeleteOffre_NotFound() {
         // Arrange
-        when(offremploiRepository.existsById(1)).thenReturn(false);
+        when(offremploiRepository.existsById(1L)).thenReturn(false);
 
         // Act & Assert
-        assertThrows(RuntimeException.class, () -> offreEmploiService.deleteOffre(1));
+        assertThrows(RuntimeException.class, () -> offreEmploiService.deleteOffre(1L));
     }
 
     @Test

@@ -1,6 +1,9 @@
 package com.ilisi.jobfinder.dto;
 
+import com.ilisi.jobfinder.Enum.Role;
 import com.ilisi.jobfinder.model.SecteurActivite;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,5 +24,7 @@ public class EntrepriseDTO {
     private String about;
     private List<SecteurActivite> activitySectors;
     private AdresseDTO adress;
+    @Enumerated(EnumType.STRING)
+    private Role role = Role.ENTREPRISE;
     private String token;
 }

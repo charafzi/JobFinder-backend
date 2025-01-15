@@ -59,9 +59,9 @@ public class EntrepriseController {
        return this.entrepriseService.getSecteursActivites();
     }
 
-    @PostMapping("/profile-picture/{email}")
+    @PostMapping("/profile-picture/{id}")
     public ResponseEntity<String> saveUserPicture(
-            @PathVariable String email,
+            @PathVariable Long id,
             @RequestParam("file") MultipartFile file){
 
 
@@ -76,18 +76,18 @@ public class EntrepriseController {
         }
 
         try {
-            String imageUrl = entrepriseService.uploadProfilePicture(email,file);
+            String imageUrl = entrepriseService.uploadProfilePicture(id,file);
             return ResponseEntity.ok(imageUrl);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload image: " + e.getMessage());
         }
     }
 
-    @GetMapping("/profile-picture/{email}")
-    public ResponseEntity<byte[]> getProfilePicture(@PathVariable String email) {
+    @GetMapping("/profile-picture/{id}")
+    public ResponseEntity<byte[]> getProfilePicture(@PathVariable Long id) {
         try {
             // Get the binary data of the image
-            byte[] imageData = entrepriseService.getProfilePictureData(email);
+            byte[] imageData = entrepriseService.getProfilePictureData(id);
 
             // Check if the image data exists
             if (imageData != null) {

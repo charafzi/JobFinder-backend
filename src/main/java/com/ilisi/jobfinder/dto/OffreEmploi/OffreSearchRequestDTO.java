@@ -5,10 +5,12 @@ import com.ilisi.jobfinder.Enum.SortBy;
 import com.ilisi.jobfinder.Enum.SortDirection;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class OffreSearchRequestDTO {
     private String keyword;
-    private ContratType typeContrat;
+    private List<ContratType> typeContrat;
     private Double salaryMin;
     private Double salaryMax;
     private int page = 0;

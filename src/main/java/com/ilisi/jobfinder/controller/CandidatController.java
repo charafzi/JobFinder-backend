@@ -1,13 +1,19 @@
 package com.ilisi.jobfinder.controller;
 
+import com.ilisi.jobfinder.Enum.DocumentType;
+import com.ilisi.jobfinder.dto.DocumentDTO;
 import com.ilisi.jobfinder.service.CandidatService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/candidat")
@@ -56,4 +62,47 @@ public class CandidatController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @PostMapping("/document")
+    public ResponseEntity<?> uploadDocumentByUser(
+            @NonNull @RequestParam("email") String email,
+            @NonNull @RequestParam("type") DocumentType type,
+            @NonNull @RequestParam("document") MultipartFile document
+            ){
+        try {
+            this.candidatService.uploadDocument(email,document,type);
+            return ResponseEntity.ok().build();
+        } catch (IOException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+        catch (EntityNotFoundException e){
+            return ResponseEntity.notFound().build();
+        }
+        catch (Exception e){
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/document/{docId}")
+    public ResponseEntity<byte[]> getDocumentById(@PathVariable Long docId) {
+        try {
+            DocumentDTO documentDTO = candidatService.getDocumentById(docId);
+
+            // Check if the image data exists
+            if (documentDTO.getData()!= null) {
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(documentDTO.getContentType());
+                return new ResponseEntity<>(documentDTO.getData(), headers, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        }
+        catch (IOException e ){
+            return ResponseEntity.internalServerError().build();
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
 }

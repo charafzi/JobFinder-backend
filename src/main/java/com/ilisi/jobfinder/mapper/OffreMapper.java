@@ -9,6 +9,7 @@ public class OffreMapper {
 
     public static OffreDTO toDto(OffreEmploi offreEmploi) {
         OffreDTO dto = new OffreDTO();
+        dto.setId(offreEmploi.getId());
         dto.setTitle(offreEmploi.getTitre());
         dto.setDescription(offreEmploi.getDescription());
         dto.setPosition(offreEmploi.getPoste());
@@ -27,6 +28,7 @@ public class OffreMapper {
 
     public static OffreSearchResponseDTO toOffreSearchResponseDTO(OffreEmploi offreEmploi){
         OffreSearchResponseDTO dto = OffreSearchResponseDTO.builder()
+                .id(offreEmploi.getId())
                 .title(offreEmploi.getTitre())
                 .description(offreEmploi.getDescription())
                 .position(offreEmploi.getPoste())
