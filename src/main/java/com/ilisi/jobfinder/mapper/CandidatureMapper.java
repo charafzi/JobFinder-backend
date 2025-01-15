@@ -1,8 +1,10 @@
 package com.ilisi.jobfinder.mapper;
 
 import com.ilisi.jobfinder.Enum.CandidatureStatus;
+import com.ilisi.jobfinder.dto.Candidature.CandidatureCandidatDTO;
 import com.ilisi.jobfinder.dto.Candidature.CandidatureRequest;
 import com.ilisi.jobfinder.dto.CandidatureDTO;
+import com.ilisi.jobfinder.dto.OffreEmploi.OffreDTO;
 import com.ilisi.jobfinder.model.*;
 
 import java.time.LocalDateTime;
@@ -48,5 +50,17 @@ public class CandidatureMapper {
             candidatureDTO.setLettreMotivationDocId(candidature.getLettreMotivation().getId());
         }
         return candidatureDTO;
+    }
+
+    public static CandidatureCandidatDTO toCandidatureCandidatDTO(Candidature candidature){
+        OffreDTO offredto = OffreMapper.toDto(candidature.getOffreEmploi());
+        return CandidatureCandidatDTO.builder()
+                .offre(offredto)
+                .dateCandidature(candidature.getDateCandidature())
+                .status(candidature.getStatus())
+                .cvDocId(candidature.getCv().getId())
+                .lettreMotivationDocId(candidature.getLettreMotivation() != null ? candidature.getLettreMotivation().getId() : null)
+                .build();
+
     }
 }

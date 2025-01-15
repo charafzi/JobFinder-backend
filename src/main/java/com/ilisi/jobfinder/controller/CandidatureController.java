@@ -2,6 +2,7 @@ package com.ilisi.jobfinder.controller;
 
 
 import com.ilisi.jobfinder.Enum.CandidatureStatus;
+import com.ilisi.jobfinder.dto.Candidature.CandidatureCandidatDTO;
 import com.ilisi.jobfinder.dto.Candidature.CandidatureDeleteRequest;
 import com.ilisi.jobfinder.dto.Candidature.CandidatureRequest;
 import com.ilisi.jobfinder.dto.Candidature.CandidatureStatusUpdateResquest;
@@ -50,9 +51,9 @@ public class CandidatureController {
     }
 
     @GetMapping("/candidat/{email}")
-    public ResponseEntity<List<CandidatureDTO>> getAllCandidaturesByUser(@PathVariable String email){
+    public ResponseEntity<List<CandidatureCandidatDTO>> getAllCandidaturesByUser(@PathVariable String email){
         try {
-            List<CandidatureDTO> candidatureDTOS = this.candidatureService.getAllCandidaturesByUser(email);
+            List<CandidatureCandidatDTO> candidatureDTOS = this.candidatureService.getAllCandidaturesByUser(email);
             return ResponseEntity.ok().body(candidatureDTOS);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
