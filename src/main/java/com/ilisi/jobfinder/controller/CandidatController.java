@@ -44,11 +44,11 @@ public class CandidatController {
         }
     }
 
-    @GetMapping("/profile-picture/{email}")
-    public ResponseEntity<byte[]> getProfilePicture(@PathVariable String email) {
+    @GetMapping("/profile-picture/{id}")
+    public ResponseEntity<byte[]> getProfilePicture(@PathVariable Long id) {
         try {
             // Get the binary data of the image
-            byte[] imageData = candidatService.getProfilePictureData(email);
+            byte[] imageData = candidatService.getProfilePictureData(id);
 
             // Check if the image data exists
             if (imageData != null) {

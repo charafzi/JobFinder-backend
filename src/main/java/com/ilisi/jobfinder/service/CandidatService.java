@@ -93,8 +93,8 @@ public class CandidatService {
         return userProfileUrl;
     }
 
-    public byte[] getProfilePictureData(String email) throws IOException {
-        User user = userService.getUserByEmail(email)
+    public byte[] getProfilePictureData(Long id) throws IOException {
+        User user = userService.getUserById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         // Get the URL or file path of the stored image
