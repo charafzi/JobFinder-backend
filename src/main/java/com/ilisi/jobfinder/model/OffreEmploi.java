@@ -40,4 +40,5 @@ public class OffreEmploi {
     @OneToMany(mappedBy = "offreEmploi")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     List<Candidature> candidatures;
+    private String question;
 }
