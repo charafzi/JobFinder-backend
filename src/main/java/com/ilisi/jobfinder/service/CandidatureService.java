@@ -161,4 +161,24 @@ public class CandidatureService {
         candid.setStatus(candidatureStatus);
         candidatureRepository.save(candid);
     }
+
+    public boolean checkIfUserApplied(Long userId, Long offreId)  throws EntityNotFoundException{
+        // Vérifier si le candidat existe
+        Candidat candidat = candidatRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("Candidat introuvable."));
+
+        // Vérifier si l'offre existe
+        OffreEmploi offre = offreEmploiRepository.findById(offreId)
+                .orElseThrow(() -> new EntityNotFoundException("Offre introuvable."));
+
+        // Check if already applied - using the composite key
+        CandidatureId candidatureId = new CandidatureId();
+        candidatureId.setCandidatId(userId);
+        candidatureId.setOffreEmploiId(offreId);
+
+        if (candidatureRepository.findById(candidatureId).isPresent()) {
+            return true;
+        }
+        return false;
+    }
 }
