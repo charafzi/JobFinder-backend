@@ -46,6 +46,7 @@ public class CandidatureMapper {
         candidatureDTO.setCvDocId(candidature.getCv().getId());
         candidatureDTO.setDateCandidature(candidature.getDateCandidature());
         candidatureDTO.setStatus(candidature.getStatus());
+        candidatureDTO.setReponse(candidature.getReponse());
         if(candidature.getLettreMotivation() != null){
             candidatureDTO.setLettreMotivationDocId(candidature.getLettreMotivation().getId());
         }
@@ -59,6 +60,7 @@ public class CandidatureMapper {
                 .dateCandidature(candidature.getDateCandidature())
                 .status(candidature.getStatus())
                 .cvDocId(candidature.getCv().getId())
+                .reponse(candidature.getReponse())
                 .lettreMotivationDocId(candidature.getLettreMotivation() != null ? candidature.getLettreMotivation().getId() : null)
                 .build();
 

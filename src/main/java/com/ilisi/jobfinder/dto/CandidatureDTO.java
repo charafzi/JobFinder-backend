@@ -24,6 +24,7 @@ public class CandidatureDTO {
     private LocalDateTime dateCandidature;
     private Long cvDocId;
     private Long lettreMotivationDocId;
+    private String reponse;
 
     @Data
     @AllArgsConstructor

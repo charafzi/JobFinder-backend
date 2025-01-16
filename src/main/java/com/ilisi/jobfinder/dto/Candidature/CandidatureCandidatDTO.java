@@ -22,4 +22,5 @@ public class CandidatureCandidatDTO {
     private LocalDateTime dateCandidature;
     private Long cvDocId;
     private Long lettreMotivationDocId;
+    private String reponse;
 }
