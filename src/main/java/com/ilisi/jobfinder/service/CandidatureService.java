@@ -8,6 +8,7 @@ import com.ilisi.jobfinder.dto.Candidature.CandidatureRequest;
 import com.ilisi.jobfinder.dto.Candidature.CandidatureStatusUpdateResquest;
 import com.ilisi.jobfinder.dto.CandidatureDTO;
 import com.ilisi.jobfinder.dto.OffreEmploi.PageResponse;
+import com.ilisi.jobfinder.exceptions.AucuneReponsePourQuestion;
 import com.ilisi.jobfinder.exceptions.OffreDejaPostule;
 import com.ilisi.jobfinder.mapper.CandidatureMapper;
 import com.ilisi.jobfinder.model.*;
@@ -60,6 +61,13 @@ public class CandidatureService {
         candidature.setDateCandidature(LocalDateTime.now());
         candidature.setOffreEmploi(offre);
         candidature.setCandidat(candidat);
+        if(offre.getQuestion() != null){
+            if(request.getReponse() == null){
+                throw new AucuneReponsePourQuestion();
+            }
+        }
+
+        candidature.setReponse(request.getReponse());
 
 
         //Voir si un nouveau CV est téléchargée

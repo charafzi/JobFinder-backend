@@ -8,6 +8,7 @@ import com.ilisi.jobfinder.dto.Candidature.CandidatureRequest;
 import com.ilisi.jobfinder.dto.Candidature.CandidatureStatusUpdateResquest;
 import com.ilisi.jobfinder.dto.CandidatureDTO;
 import com.ilisi.jobfinder.dto.OffreEmploi.PageResponse;
+import com.ilisi.jobfinder.exceptions.AucuneReponsePourQuestion;
 import com.ilisi.jobfinder.exceptions.OffreDejaPostule;
 import com.ilisi.jobfinder.service.CandidatureService;
 import jakarta.persistence.EntityNotFoundException;
@@ -37,7 +38,7 @@ public class CandidatureController {
         catch (EntityNotFoundException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erreur : " + e.getMessage());
         }
-        catch (OffreDejaPostule e){
+        catch (OffreDejaPostule | AucuneReponsePourQuestion e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erreur : " + e.getMessage());
         }
         catch (Exception e) {
