@@ -25,6 +25,7 @@ public class OffreMapper {
         dto.setPublicationDate(offreEmploi.getDatePublication());
         dto.setDeadlineDate(offreEmploi.getDateLimite());
         dto.setStatus(offreEmploi.getStatusOffre());
+        dto.setQuestion(offreEmploi.getQuestion());
         dto.setCompany(entreprise);
         if (offreEmploi.getAdresse() != null) {
             dto.setAdress(AdresseMapper.toDto(offreEmploi.getAdresse()));
@@ -44,6 +45,7 @@ public class OffreMapper {
                 .publicationDate(offreEmploi.getDatePublication())
                 .deadlineDate(offreEmploi.getDateLimite())
                 .company(EntrepriseMapper.toDto(offreEmploi.getEntreprise()))
+                .question(offreEmploi.getQuestion())
                 .build();
         if (offreEmploi.getAdresse() != null) {
             dto.setAdress(AdresseMapper.toDto(offreEmploi.getAdresse()));
@@ -62,6 +64,7 @@ public class OffreMapper {
         offre.setDatePublication(dto.getPublicationDate());
         offre.setDateLimite(dto.getDeadlineDate());
         offre.setStatusOffre(dto.getStatus());
+        offre.setQuestion(dto.getQuestion());
         if (dto.getCompany().getId() != null) {
             Entreprise entreprise = new Entreprise();
             entreprise.setId(dto.getCompany().getId());
