@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.RecursiveTask;
 
 @RestController
 @RequestMapping("/api/candidature")
@@ -50,6 +51,17 @@ public class CandidatureController {
         List<CandidatureDTO> candidatureDTOS = this.candidatureService.getAllCandidaturesByOffre(offreId);
         return ResponseEntity.ok().body(candidatureDTOS);
     }
+
+    @GetMapping("/check/{userId}/{offreId}")
+    public ResponseEntity<Boolean> checkIfUserApplied(@PathVariable Long userId,@PathVariable Long offreId) {
+        try {
+            boolean applied = this.candidatureService.checkIfUserApplied(userId, offreId);
+            return  ResponseEntity.ok(applied);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
 
     @GetMapping("/")
     public ResponseEntity<PageResponse<CandidatureCandidatDTO>> getAllCandidaturesByUser(
