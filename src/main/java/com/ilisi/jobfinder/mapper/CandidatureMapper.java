@@ -28,6 +28,7 @@ public class CandidatureMapper {
     }*/
     public static CandidatureDTO toDto(Candidature candidature){
         CandidatureDTO.Candidat candidat = null;
+        CandidatureDTO.OffreEmploi offreEmploi = null;
         if (candidature.getCandidat() != null) {
             candidat = CandidatureDTO.Candidat.builder()
                     .id(candidature.getCandidat().getId())
@@ -38,8 +39,17 @@ public class CandidatureMapper {
                     .profilePicture(candidature.getCandidat().getPhotoProfile())
                     .build();
         }
+        if (candidature.getOffreEmploi() != null) {
+            offreEmploi = CandidatureDTO.OffreEmploi.builder()
+                    .offreId(candidature.getOffreEmploi().getId())
+                    .poste(candidature.getOffreEmploi().getPoste())
+                    .ville(candidature.getOffreEmploi().getAdresse() != null
+                        ? candidature.getOffreEmploi().getAdresse().getVille()
+                            : null)
+                    .build();
+        }
         CandidatureDTO candidatureDTO = new CandidatureDTO();
-        candidatureDTO.setOffreId(candidature.getOffreEmploi().getId());
+        candidatureDTO.setOffreEmploi(offreEmploi);
         candidatureDTO.setCandidat(candidat);
         candidatureDTO.setCvDocId(candidature.getCv().getId());
         candidatureDTO.setDateCandidature(candidature.getDateCandidature());
