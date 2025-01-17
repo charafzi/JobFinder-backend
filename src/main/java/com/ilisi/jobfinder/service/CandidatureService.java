@@ -5,6 +5,7 @@ import com.ilisi.jobfinder.Enum.DocumentType;
 import com.ilisi.jobfinder.dto.Candidature.CandidatureDeleteRequest;
 import com.ilisi.jobfinder.dto.Candidature.CandidatureRequest;
 import com.ilisi.jobfinder.dto.Candidature.CandidatureStatusUpdateResquest;
+import com.ilisi.jobfinder.dto.Candidature.GetCandidaturesByOffreDTO;
 import com.ilisi.jobfinder.dto.CandidatureDTO;
 import com.ilisi.jobfinder.exceptions.OffreDejaPostule;
 import com.ilisi.jobfinder.mapper.CandidatureMapper;
@@ -12,6 +13,9 @@ import com.ilisi.jobfinder.model.*;
 import com.ilisi.jobfinder.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -86,13 +90,14 @@ public class CandidatureService {
     }
 
 
-    public List<CandidatureDTO> getAllCandidaturesByOffre(Long offreId) {
+    public Page<CandidatureDTO> getAllCandidaturesByOffre(GetCandidaturesByOffreDTO searchDTO) {
         // Vérifier si l'offre existe
-        OffreEmploi offre = offreEmploiRepository.findById(offreId)
+        OffreEmploi offre = offreEmploiRepository.findById(searchDTO.getOffreId())
                 .orElseThrow(() -> new EntityNotFoundException("Offre introuvable."));
+        Pageable pageable = PageRequest.of(searchDTO.getPage(), searchDTO.getSize());
 
-        List<Candidature> candidatures = this.candidatureRepository.findCandidaturesByOffreEmploiId(offreId);
-        return candidatures.stream().map(CandidatureMapper::toDto).toList();
+        Page<Candidature> candidatures = this.candidatureRepository.findCandidaturesByOffreEmploiId(searchDTO.getOffreId(), pageable);
+        return candidatures.map(CandidatureMapper::toDto);
     }
 
     public List<CandidatureDTO> getAllCandidaturesByUser(String email) throws EntityNotFoundException{
