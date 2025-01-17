@@ -2,28 +2,32 @@ package com.ilisi.jobfinder.service;
 
 import com.ilisi.jobfinder.Enum.CandidatureStatus;
 import com.ilisi.jobfinder.Enum.DocumentType;
+import com.ilisi.jobfinder.dto.Candidature.CandidatureCandidatDTO;
 import com.ilisi.jobfinder.dto.Candidature.CandidatureDeleteRequest;
 import com.ilisi.jobfinder.dto.Candidature.CandidatureRequest;
 import com.ilisi.jobfinder.dto.Candidature.CandidatureStatusUpdateResquest;
 import com.ilisi.jobfinder.dto.CandidatureDTO;
+import com.ilisi.jobfinder.dto.OffreEmploi.PageResponse;
+import com.ilisi.jobfinder.exceptions.AucuneReponsePourQuestion;
 import com.ilisi.jobfinder.exceptions.OffreDejaPostule;
 import com.ilisi.jobfinder.mapper.CandidatureMapper;
 import com.ilisi.jobfinder.model.*;
 import com.ilisi.jobfinder.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class CandidatureService {
@@ -57,6 +61,13 @@ public class CandidatureService {
         candidature.setDateCandidature(LocalDateTime.now());
         candidature.setOffreEmploi(offre);
         candidature.setCandidat(candidat);
+        if(offre.getQuestion() != null){
+            if(request.getReponse() == null){
+                throw new AucuneReponsePourQuestion();
+            }
+        }
+
+        candidature.setReponse(request.getReponse());
 
 
         //Voir si un nouveau CV est téléchargée
@@ -95,13 +106,26 @@ public class CandidatureService {
         return candidatures.stream().map(CandidatureMapper::toDto).toList();
     }
 
-    public List<CandidatureDTO> getAllCandidaturesByUser(String email) throws EntityNotFoundException{
+    public PageResponse<CandidatureCandidatDTO> getAllCandidaturesByUser(Long id, int page, int size) throws EntityNotFoundException {
         // Vérifier si le candidat existe
-        Candidat candidat = candidatRepository.findByEmail(email)
+        Candidat candidat = candidatRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Candidat introuvable."));
 
-        List<Candidature> candidatures = candidat.getCandidatures();
-        return candidatures.stream().map(CandidatureMapper::toDto).toList();
+        log.info("Candidat trouvé avec ID: {}", candidat.getId());
+
+        // Créer un objet Pageable pour la pagination
+        Pageable pageable = PageRequest.of(page, size);
+        log.info("Recherche des candidatures pour le candidat avec ID: {} et page: {}, taille: {}", candidat.getId(), page, size);
+
+        // Récupérer les candidatures paginées
+        Page<Candidature> candidaturesPage = candidatureRepository.findCandidatureByCandidatId(candidat.getId(), pageable);
+        log.info("Nombre de candidatures trouvées: {}", candidaturesPage.getTotalElements());
+
+        // Convertir les candidatures en DTOs
+        Page<CandidatureCandidatDTO> dtoPage = candidaturesPage.map(CandidatureMapper::toCandidatureCandidatDTO);
+
+        // Créer et retourner la réponse paginée
+        return PageResponse.of(dtoPage);
     }
 
     public void deleteCandidature(CandidatureDeleteRequest request) throws EntityNotFoundException {
@@ -144,5 +168,25 @@ public class CandidatureService {
 
         candid.setStatus(candidatureStatus);
         candidatureRepository.save(candid);
+    }
+
+    public boolean checkIfUserApplied(Long userId, Long offreId)  throws EntityNotFoundException{
+        // Vérifier si le candidat existe
+        Candidat candidat = candidatRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("Candidat introuvable."));
+
+        // Vérifier si l'offre existe
+        OffreEmploi offre = offreEmploiRepository.findById(offreId)
+                .orElseThrow(() -> new EntityNotFoundException("Offre introuvable."));
+
+        // Check if already applied - using the composite key
+        CandidatureId candidatureId = new CandidatureId();
+        candidatureId.setCandidatId(userId);
+        candidatureId.setOffreEmploiId(offreId);
+
+        if (candidatureRepository.findById(candidatureId).isPresent()) {
+            return true;
+        }
+        return false;
     }
 }
