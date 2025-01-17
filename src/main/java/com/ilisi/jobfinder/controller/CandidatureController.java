@@ -5,12 +5,16 @@ import com.ilisi.jobfinder.Enum.CandidatureStatus;
 import com.ilisi.jobfinder.dto.Candidature.CandidatureDeleteRequest;
 import com.ilisi.jobfinder.dto.Candidature.CandidatureRequest;
 import com.ilisi.jobfinder.dto.Candidature.CandidatureStatusUpdateResquest;
+import com.ilisi.jobfinder.dto.Candidature.GetCandidaturesByOffreDTO;
 import com.ilisi.jobfinder.dto.CandidatureDTO;
+import com.ilisi.jobfinder.dto.OffreEmploi.OffreSearchResponseDTO;
+import com.ilisi.jobfinder.dto.OffreEmploi.PageResponse;
 import com.ilisi.jobfinder.exceptions.OffreDejaPostule;
 import com.ilisi.jobfinder.service.CandidatureService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -44,9 +48,21 @@ public class CandidatureController {
     }
 
     @GetMapping("/{offreId}")
-    public ResponseEntity<List<CandidatureDTO>> getAllCandidaturesByOffre(@PathVariable Long offreId) {
-        List<CandidatureDTO> candidatureDTOS = this.candidatureService.getAllCandidaturesByOffre(offreId);
-        return ResponseEntity.ok().body(candidatureDTOS);
+    public ResponseEntity<PageResponse<CandidatureDTO>> getAllCandidaturesByOffre(
+            @PathVariable Long offreId,
+            @ModelAttribute GetCandidaturesByOffreDTO searchDTO) {
+
+        try {
+            searchDTO.setOffreId(offreId);
+            Page<CandidatureDTO> candidatureDTOS = this.candidatureService.getAllCandidaturesByOffre(searchDTO);
+            return ResponseEntity.ok(PageResponse.of(candidatureDTOS));
+        } catch (EntityNotFoundException e) {
+            // Pour une ressource non trouvée, retourner 404
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            // Log l'erreur ici si nécessaire
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     @GetMapping("/candidat/{email}")
