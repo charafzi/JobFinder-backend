@@ -49,6 +49,7 @@ class OffreControllerUnitTest {
 
     @Test
     void testCreateOffre_Success() {
+        OffreDTO.Entreprise company = OffreDTO.Entreprise.builder().id(1L).build();
         // Arrange
         OffreDTO offreDTO = OffreDTO.builder()
                 .title("Développeur Java")
@@ -59,7 +60,7 @@ class OffreControllerUnitTest {
                 .publicationDate(LocalDateTime.now())
                 .deadlineDate(LocalDateTime.now().plusDays(30))
                 .status(StatusOffre.active)
-                .companyId(1L)
+                .company(company)
                 .build();
 
         when(offreEmploiService.create_Offre(any(OffreEmploi.class))).thenReturn(new OffreEmploi());
