@@ -8,6 +8,12 @@ import com.ilisi.jobfinder.model.OffreEmploi;
 public class OffreMapper {
 
     public static OffreDTO toDto(OffreEmploi offreEmploi) {
+        OffreDTO.Entreprise entreprise = OffreDTO.Entreprise.builder()
+                .name(offreEmploi.getEntreprise().getNom())
+                .id(offreEmploi.getEntreprise().getId())
+                .email(offreEmploi.getEntreprise().getEmail())
+                .phoneNumber(offreEmploi.getEntreprise().getTelephone()).build();
+
         OffreDTO dto = new OffreDTO();
         dto.setId(offreEmploi.getId());
         dto.setTitle(offreEmploi.getTitre());
@@ -19,7 +25,8 @@ public class OffreMapper {
         dto.setPublicationDate(offreEmploi.getDatePublication());
         dto.setDeadlineDate(offreEmploi.getDateLimite());
         dto.setStatus(offreEmploi.getStatusOffre());
-        dto.setCompanyId(offreEmploi.getEntreprise().getId());
+        dto.setQuestion(offreEmploi.getQuestion());
+        dto.setCompany(entreprise);
         if (offreEmploi.getAdresse() != null) {
             dto.setAdress(AdresseMapper.toDto(offreEmploi.getAdresse()));
         }
@@ -38,6 +45,7 @@ public class OffreMapper {
                 .publicationDate(offreEmploi.getDatePublication())
                 .deadlineDate(offreEmploi.getDateLimite())
                 .company(EntrepriseMapper.toDto(offreEmploi.getEntreprise()))
+                .question(offreEmploi.getQuestion())
                 .build();
         if (offreEmploi.getAdresse() != null) {
             dto.setAdress(AdresseMapper.toDto(offreEmploi.getAdresse()));
@@ -56,9 +64,10 @@ public class OffreMapper {
         offre.setDatePublication(dto.getPublicationDate());
         offre.setDateLimite(dto.getDeadlineDate());
         offre.setStatusOffre(dto.getStatus());
-        if (dto.getCompanyId() != null) {
+        offre.setQuestion(dto.getQuestion());
+        if (dto.getCompany().getId() != null) {
             Entreprise entreprise = new Entreprise();
-            entreprise.setId(dto.getCompanyId());
+            entreprise.setId(dto.getCompany().getId());
             offre.setEntreprise(entreprise);
         }
         if(dto.getAdress() != null){

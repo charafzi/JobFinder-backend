@@ -20,6 +20,7 @@ public class OffreSearchResponseDTO {
     private List<String> requirements;
     private ContratType contractType;
     private double salary;
+    private String question;
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime publicationDate;
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")

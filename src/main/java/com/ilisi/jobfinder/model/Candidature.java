@@ -39,4 +39,6 @@ public class Candidature {
     @ManyToOne
     @JoinColumn(name = "lettre_motivation_id")
     private Document lettreMotivation;
+
+    private String reponse;
 }

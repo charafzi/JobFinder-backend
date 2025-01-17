@@ -2,13 +2,15 @@ package com.ilisi.jobfinder.controller;
 
 
 import com.ilisi.jobfinder.Enum.CandidatureStatus;
+import com.ilisi.jobfinder.dto.Candidature.CandidatureCandidatDTO;
 import com.ilisi.jobfinder.dto.Candidature.CandidatureDeleteRequest;
 import com.ilisi.jobfinder.dto.Candidature.CandidatureRequest;
 import com.ilisi.jobfinder.dto.Candidature.CandidatureStatusUpdateResquest;
 import com.ilisi.jobfinder.dto.Candidature.GetCandidaturesByOffreDTO;
 import com.ilisi.jobfinder.dto.CandidatureDTO;
-import com.ilisi.jobfinder.dto.OffreEmploi.OffreSearchResponseDTO;
+
 import com.ilisi.jobfinder.dto.OffreEmploi.PageResponse;
+import com.ilisi.jobfinder.exceptions.AucuneReponsePourQuestion;
 import com.ilisi.jobfinder.exceptions.OffreDejaPostule;
 import com.ilisi.jobfinder.service.CandidatureService;
 import jakarta.persistence.EntityNotFoundException;
@@ -18,10 +20,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.LinkedList;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/candidature")
@@ -38,7 +36,7 @@ public class CandidatureController {
         catch (EntityNotFoundException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erreur : " + e.getMessage());
         }
-        catch (OffreDejaPostule e){
+        catch (OffreDejaPostule | AucuneReponsePourQuestion e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erreur : " + e.getMessage());
         }
         catch (Exception e) {
@@ -65,11 +63,26 @@ public class CandidatureController {
         }
     }
 
-    @GetMapping("/candidat/{email}")
-    public ResponseEntity<List<CandidatureDTO>> getAllCandidaturesByUser(@PathVariable String email){
+    @GetMapping("/check/{userId}/{offreId}")
+    public ResponseEntity<Boolean> checkIfUserApplied(@PathVariable Long userId,@PathVariable Long offreId) {
         try {
-            List<CandidatureDTO> candidatureDTOS = this.candidatureService.getAllCandidaturesByUser(email);
-            return ResponseEntity.ok().body(candidatureDTOS);
+            boolean applied = this.candidatureService.checkIfUserApplied(userId, offreId);
+            return  ResponseEntity.ok(applied);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
+
+    @GetMapping("/")
+    public ResponseEntity<PageResponse<CandidatureCandidatDTO>> getAllCandidaturesByUser(
+            @RequestParam Long id,
+            @RequestParam int page,
+            @RequestParam int size
+    ){
+        try {
+            PageResponse<CandidatureCandidatDTO> result= this.candidatureService.getAllCandidaturesByUser(id,page,size);
+            return ResponseEntity.ok().body(result);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
