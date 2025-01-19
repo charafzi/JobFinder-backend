@@ -8,6 +8,8 @@ import com.ilisi.jobfinder.model.User;
 import com.ilisi.jobfinder.service.OtpService;
 import com.ilisi.jobfinder.service.AuthService;
 import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +20,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 
 
 @RestController
@@ -108,5 +111,10 @@ public class AuthController {
        catch (Exception e){
            return ResponseEntity.badRequest().body(null);
        }
+   }
+
+   @PostMapping("/refresh-token")
+    public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        this.authService.refreshToken(request,response);
    }
 }

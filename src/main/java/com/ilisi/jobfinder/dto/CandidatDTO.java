@@ -24,5 +24,6 @@ public class CandidatDTO {
     @Enumerated(EnumType.STRING)
     private Role role = Role.CANDIDAT;
     private String token;
+    private String refreshToken;
     private List<Long> cvDocumentsId;
 }
