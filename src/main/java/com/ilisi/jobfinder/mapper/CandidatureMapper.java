@@ -48,6 +48,7 @@ public class CandidatureMapper {
                     .ville(candidature.getOffreEmploi().getAdresse() != null
                         ? candidature.getOffreEmploi().getAdresse().getVille()
                             : null)
+                    .question(candidature.getOffreEmploi().getQuestion())
                     .build();
         }
         CandidatureDTO candidatureDTO = new CandidatureDTO();

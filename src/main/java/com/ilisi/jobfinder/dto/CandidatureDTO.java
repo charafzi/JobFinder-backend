@@ -48,6 +48,7 @@ public class CandidatureDTO {
         private Long offreId;
         private String poste;
         private String ville;
+        private String question;
     }
 }
 
