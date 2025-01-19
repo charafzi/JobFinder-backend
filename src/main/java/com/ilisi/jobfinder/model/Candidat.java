@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,6 +25,12 @@ public class Candidat extends User {
     private List<Formation> formations;
     @OneToMany(mappedBy = "candidat", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Experience> experiences;
+    @OneToMany(mappedBy = "candidat", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Langue> langues;
+    @OneToOne(mappedBy = "candidat", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private About about;
+    @OneToMany(mappedBy = "candidat", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Competences> competences;
     @OneToMany(mappedBy ="candidat", cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Document> documents;
 }
