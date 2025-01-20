@@ -37,3 +37,6 @@ build/
 
 /src/main/java/com/ilisi/jobfinder/assets/candidatProfilePic
 /src/main/java/com/ilisi/jobfinder/assets/entrepriseProfilePic
+
+## Google Cloud Service Account Credentials
+src/main/resources/firebase-service-account.json
