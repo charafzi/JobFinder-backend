@@ -21,6 +21,9 @@ import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
+import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -103,7 +106,6 @@ public class AuthService {
         );
         String jwtToken = jwtService.generateToken(user.getEmail());
         String refreshToken = jwtService.generateRefreshToken(user.getEmail());
-
         if(user instanceof Entreprise){
             EntrepriseDTO entrepriseDTO = EntrepriseMapper.toDto((Entreprise) user);
             entrepriseDTO.setToken(jwtToken);
@@ -151,4 +153,39 @@ public class AuthService {
             }
         }
     }
+//    public UserDTO authenticateWithGoogle(Auth0Request auth0Request) {
+//        Optional<User> userOpt;
+//        try {
+//            // Recherche de l'utilisateur existant par Google ID
+//            userOpt = userService.getUserbyGoogleId(auth0Request.getSub());
+//        } catch (Exception e) {
+//            System.err.println("Erreur lors de la recherche de l'utilisateur : " + e.getMessage());
+//            throw e;
+//        }
+//
+//        User user;
+//        if (userOpt.isPresent()) {
+//            // Si l'utilisateur existe déjà
+//            user = userOpt.get();
+//        } else {
+//            // Si l'utilisateur n'existe pas, en créer un nouveau
+//            user = auth0Request.toUser();  // Utilisation de la méthode toUser() pour créer l'utilisateur
+//
+//            // Sauvegarder l'utilisateur
+//            user = userService.createUser(user);
+//        }
+//
+//        System.out.println("Utilisateur authentifié ou créé : " + user);
+//
+//        // Génération du token JWT
+//        String token = jwtService.generateToken(user.getEmail());
+//
+//        // Construire et retourner le UserDTO
+//        return UserDTO.builder()
+//                .id(user.getId())
+//                .email(user.getEmail())
+//                .token(token)
+//                .role(user.getRole())
+//                .build();
+//    }
 }
