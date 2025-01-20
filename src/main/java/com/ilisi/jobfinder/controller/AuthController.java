@@ -8,6 +8,8 @@ import com.ilisi.jobfinder.model.User;
 import com.ilisi.jobfinder.service.OtpService;
 import com.ilisi.jobfinder.service.AuthService;
 import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +19,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
-
+import java.io.IOException;
 
 
 @RestController
@@ -85,6 +87,7 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error during sending OTP code.");
         }
     }
+  
     // Endpoint pour valider l'OTP
     @GetMapping("/validate-otp")
     public ResponseEntity<?> validateOtp(@RequestParam String email, @RequestParam String otp)
@@ -93,8 +96,8 @@ public class AuthController {
        return otp.equals(storedotp) ?
                ResponseEntity.ok().body("OTP valid") :
                ResponseEntity.badRequest().body("OTP Invalid");
-
     }
+  
    @PostMapping("/resetPassword")
     public ResponseEntity<?> updatePassword(@RequestBody ResetPasswordRequest resetPasswordRequest){
        try {
@@ -109,4 +112,10 @@ public class AuthController {
            return ResponseEntity.badRequest().body(null);
        }
    }
+
+   @PostMapping("/refresh-token")
+    public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        this.authService.refreshToken(request,response);
+    }
+  
 }
