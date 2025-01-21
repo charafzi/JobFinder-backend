@@ -24,7 +24,27 @@ public class NotificationService {
     private FirebaseMessaging firebaseMessaging;
     private UserRepository userRepository;
 
-    public void sendNotificationPostulationCandidatByEntreprise(Candidature candidature, CandidatureStatus status){
+    public void sendNotificationPostulationCandidatByEntreprise(OffreEmploi offre){
+        User user = this.userRepository.findById(offre.getEntreprise().getId())
+                .orElseThrow(()-> new EntityNotFoundException("User not found"));
+
+        String titre= "New Applicant for the " + offre.getPoste() + " Position";
+        String contenu = "You have received a new application for the job offer titled :" + offre.getTitre() + ". Check your job offers for more details.";
+
+        // save notification for history
+        this.saveNotificationByUser(user,titre,contenu);
+
+        System.out.println("I willl send notif to "+user.getEmail());
+
+        if(user.getFcmToken() != null){
+            //send notification by FCM
+            if(!this.sendNotificationByFCMToken(user.getFcmToken(),titre,contenu)){
+                log.error("Error while sending notification to Entreprise");
+            }
+        }
+    }
+
+    public void sendNotificationStatusChangedCandidature(Candidature candidature, CandidatureStatus status){
         User user = this.userRepository.findById(candidature.getCandidat().getId())
                 .orElseThrow(()-> new EntityNotFoundException("User not found"));
 
@@ -54,8 +74,6 @@ public class NotificationService {
             }
         }
     }
-
-
 
     public boolean sendNotificationByFCMToken(String fcmToken,String title,String body){
         Notification notification = Notification

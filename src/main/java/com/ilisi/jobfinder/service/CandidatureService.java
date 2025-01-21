@@ -172,6 +172,9 @@ public class CandidatureService {
 
         candid.setStatus(candidatureStatus);
         candidatureRepository.save(candid);
+
+        //send notification to candidat
+        this.notificationService.sendNotificationStatusChangedCandidature(candidature.get(),candidatureStatus);
     }
 
     public boolean checkIfUserApplied(Long userId, Long offreId)  throws EntityNotFoundException{
