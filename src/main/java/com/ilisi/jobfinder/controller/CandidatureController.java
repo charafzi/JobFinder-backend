@@ -121,4 +121,10 @@ public class CandidatureController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
+
+    @GetMapping("/entreprises/{entrepriseId}/count")
+    public ResponseEntity<Integer> getNombreCandidaturesParEntreprise(@PathVariable Long entrepriseId) {
+        int nombreCandidatures = candidatureService.getNombreCandidaturesParEntreprise(entrepriseId);
+        return ResponseEntity.ok(nombreCandidatures);
+    }
 }

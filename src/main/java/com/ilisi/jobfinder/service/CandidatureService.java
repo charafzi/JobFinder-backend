@@ -189,4 +189,8 @@ public class CandidatureService {
         }
         return false;
     }
+
+    public int getNombreCandidaturesParEntreprise(Long entrepriseId) {
+        return candidatureRepository.countByEntrepriseId(entrepriseId);
+    }
 }
