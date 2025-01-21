@@ -9,6 +9,7 @@ import lombok.Data;
 public class RegisterEntrepriseRequest {
     private String nom;
     private String phoneNumber;
+    private String about;
     private String email;
     private String password;
     private Role role=Role.ENTREPRISE;

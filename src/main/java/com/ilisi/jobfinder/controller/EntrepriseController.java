@@ -29,7 +29,6 @@ public class EntrepriseController {
             return ResponseEntity.badRequest().body(null);
         }
     }
-
     @DeleteMapping("/{email}")
     public ResponseEntity<?> deleteEntrepriseByEmail(@PathVariable String email){
         try {
@@ -99,6 +98,17 @@ public class EntrepriseController {
             }
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    @PutMapping("/{entrepriseId}/secteurs")
+    public ResponseEntity<EntrepriseDTO> updateEntrepriseSecteurs(
+            @PathVariable Long entrepriseId,
+            @RequestBody List<Long> secteurIds) {
+        try {
+            EntrepriseDTO updatedEntreprise = entrepriseService.updateEntrepriseSecteurs(entrepriseId, secteurIds);
+            return ResponseEntity.ok(updatedEntreprise);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(null);
         }
     }
 }

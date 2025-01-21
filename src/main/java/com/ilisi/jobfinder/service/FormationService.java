@@ -63,4 +63,11 @@ public class FormationService {
         return FormationMapper.toFormationResponse(formation);
     }
 
+    public List<FormationResponse> getAllFormations() {
+        List<Formation> formations=formationRepository.findAll();
+        return formations
+                .stream()
+                .map(FormationMapper::toFormationResponse)
+                .collect(Collectors.toList());
+    }
 }
