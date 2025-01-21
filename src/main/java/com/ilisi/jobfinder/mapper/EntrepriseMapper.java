@@ -17,6 +17,7 @@ public class EntrepriseMapper {
                 .activitySectors(entity.getSecteurActivites())
                 .role(Role.ENTREPRISE)
                 .about(entity.getAbout())
+                .fcmToken(entity.getFcmToken())
                 .build();
     }
 }

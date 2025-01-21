@@ -1,9 +1,6 @@
 package com.ilisi.jobfinder.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,7 +16,10 @@ public class Notification {
  @GeneratedValue(strategy = GenerationType.IDENTITY)
  private Long id;
  private String titre;
- private String message;
+ private String contenu;
  private LocalDateTime dateEnvoi;
  private boolean vue;
+ @ManyToOne
+ @JoinColumn(name = "user_id")
+ private User user;
 }

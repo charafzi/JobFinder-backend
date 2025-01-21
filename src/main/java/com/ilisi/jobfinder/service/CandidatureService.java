@@ -35,6 +35,7 @@ public class CandidatureService {
     private final OffreEmploiRepository offreEmploiRepository;
     private final CandidatureRepository candidatureRepository;
     private final DocumentService documentService;
+    private final NotificationService notificationService;
 
 
     public void postuler(CandidatureRequest request) throws IOException, OffreDejaPostule,EntityNotFoundException {
@@ -93,6 +94,9 @@ public class CandidatureService {
         }
         candidature.setStatus(CandidatureStatus.ENVOYEE);
         candidatureRepository.save(candidature);
+
+        //send notification for entreprise
+        this.notificationService.sendNotificationPostulationCandidatByEntreprise(offre);
 
     }
 
