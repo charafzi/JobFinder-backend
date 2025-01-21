@@ -4,6 +4,9 @@ import com.ilisi.jobfinder.Enum.Role;
 import com.ilisi.jobfinder.dto.AdresseDTO;
 import lombok.Builder;
 import lombok.Data;
+
+import java.util.List;
+
 @Builder
 @Data
 public class RegisterEntrepriseRequest {
@@ -14,4 +17,5 @@ public class RegisterEntrepriseRequest {
     private String password;
     private Role role=Role.ENTREPRISE;
     private AdresseDTO adress;
+    private List<Long> secteurIds;
 }
