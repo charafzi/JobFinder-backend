@@ -1,7 +1,10 @@
 package com.ilisi.jobfinder.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+import com.ilisi.jobfinder.dto.OffreEmploi.*;
+import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import com.corundumstudio.socketio.SocketIOServer;
 import com.corundumstudio.socketio.listener.ConnectListener;
 import com.corundumstudio.socketio.listener.DisconnectListener;
-import com.ilisi.jobfinder.dto.OffreEmploi.OffreDTO;
-import com.ilisi.jobfinder.dto.OffreEmploi.OffreSearchRequestDTO;
-import com.ilisi.jobfinder.dto.OffreEmploi.OffreSearchResponseDTO;
-import com.ilisi.jobfinder.dto.OffreEmploi.PageResponse;
 import com.ilisi.jobfinder.mapper.OffreMapper;
 import com.ilisi.jobfinder.model.OffreEmploi;
 import com.ilisi.jobfinder.service.OffreEmploiService;
@@ -132,7 +131,23 @@ public class OffreController {
         }
     }
 
+    @GetMapping("/byEntreprise/{entrepriseId}")
+    public ResponseEntity<PageResponse<OffreSearchResponseDTO>> getOffresByCompanyId(@PathVariable  Long entrepriseId,
+                                                                                     @ModelAttribute GetOffresByEntrepriseIdDTO searchDTO) {
+        try {
+            searchDTO.setEntrepriseId(entrepriseId);
+            Page<OffreSearchResponseDTO> result = this.offreEmploiService.getOffresByCompanyId(searchDTO);
+            return ResponseEntity.ok(PageResponse.of(result));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(null);
+        }
+    }
 
+    @GetMapping("/{entrepriseId}/count")
+    public ResponseEntity<Integer> getNombreOffresParEntreprise(@PathVariable Long entrepriseId) {
+        int nombreOffres = offreEmploiService.getNombreOffresParEntreprise(entrepriseId);
+        return ResponseEntity.ok(nombreOffres);
+    }
     /******************* Méthodes Socket.IO ********************/
 
     /// Gestionnaire d'événement de connexion d'un client

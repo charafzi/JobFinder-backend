@@ -1,6 +1,7 @@
 package com.ilisi.jobfinder.dto;
 
 import com.ilisi.jobfinder.Enum.CandidatureStatus;
+import com.ilisi.jobfinder.model.Adresse;
 import com.ilisi.jobfinder.model.Candidat;
 import com.ilisi.jobfinder.model.Candidature;
 import jakarta.persistence.EnumType;
@@ -17,7 +18,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class CandidatureDTO {
-    private Long offreId;
+    private CandidatureDTO.OffreEmploi offreEmploi;
     private CandidatureDTO.Candidat candidat;
     @Enumerated(EnumType.STRING)
     private CandidatureStatus status;
@@ -38,4 +39,16 @@ public class CandidatureDTO {
         private String firstName;
         private String lastName;
     }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class OffreEmploi {
+        private Long offreId;
+        private String poste;
+        private String ville;
+        private String question;
+    }
 }
+

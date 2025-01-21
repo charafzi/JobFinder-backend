@@ -6,6 +6,7 @@ import com.ilisi.jobfinder.dto.Candidature.CandidatureCandidatDTO;
 import com.ilisi.jobfinder.dto.Candidature.CandidatureDeleteRequest;
 import com.ilisi.jobfinder.dto.Candidature.CandidatureRequest;
 import com.ilisi.jobfinder.dto.Candidature.CandidatureStatusUpdateResquest;
+import com.ilisi.jobfinder.dto.Candidature.GetCandidaturesByOffreDTO;
 import com.ilisi.jobfinder.dto.CandidatureDTO;
 import com.ilisi.jobfinder.dto.OffreEmploi.PageResponse;
 import com.ilisi.jobfinder.exceptions.AucuneReponsePourQuestion;
@@ -20,11 +21,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -97,13 +96,14 @@ public class CandidatureService {
     }
 
 
-    public List<CandidatureDTO> getAllCandidaturesByOffre(Long offreId) {
+    public Page<CandidatureDTO> getAllCandidaturesByOffre(GetCandidaturesByOffreDTO searchDTO) {
         // Vérifier si l'offre existe
-        OffreEmploi offre = offreEmploiRepository.findById(offreId)
+        OffreEmploi offre = offreEmploiRepository.findById(searchDTO.getOffreId())
                 .orElseThrow(() -> new EntityNotFoundException("Offre introuvable."));
+        Pageable pageable = PageRequest.of(searchDTO.getPage(), searchDTO.getSize());
 
-        List<Candidature> candidatures = this.candidatureRepository.findCandidaturesByOffreEmploiId(offreId);
-        return candidatures.stream().map(CandidatureMapper::toDto).toList();
+        Page<Candidature> candidatures = this.candidatureRepository.findCandidaturesByOffreEmploiId(searchDTO.getOffreId(), pageable);
+        return candidatures.map(CandidatureMapper::toDto);
     }
 
     public PageResponse<CandidatureCandidatDTO> getAllCandidaturesByUser(Long id, int page, int size) throws EntityNotFoundException {
@@ -188,5 +188,13 @@ public class CandidatureService {
             return true;
         }
         return false;
+    }
+
+    public int getNombreCandidaturesParEntreprise(Long entrepriseId) {
+        return candidatureRepository.countByEntrepriseId(entrepriseId);
+    }
+
+    public int getNombreCandidaturesAccepteesParEntreprise(Long entrepriseId) {
+        return candidatureRepository.countAcceptedCandidaturesByEntrepriseId(entrepriseId);
     }
 }
