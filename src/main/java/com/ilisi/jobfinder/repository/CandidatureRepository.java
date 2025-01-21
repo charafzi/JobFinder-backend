@@ -24,4 +24,7 @@ public interface CandidatureRepository extends JpaRepository<Candidature, Candid
 
     @Query("SELECT count(c) FROM Candidature c WHERE c.offreEmploi.entreprise.id= :entrepriseId")
     int countByEntrepriseId(@Param("entrepriseId") Long entrepriseId);
+
+    @Query("SELECT count(c) FROM Candidature c WHERE c.offreEmploi.entreprise.id= :entrepriseId and c.status = 'ACCEPTE' ")
+    int countAcceptedCandidaturesByEntrepriseId(@Param("entrepriseId") Long entrepriseId);
 }
