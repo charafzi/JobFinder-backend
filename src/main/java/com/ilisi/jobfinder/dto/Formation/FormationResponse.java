@@ -9,6 +9,7 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 public class FormationResponse {
+    private Long id;
     private String nomEcole;
     private NiveauEtudeStatus niveauEtude;
     private LocalDate dateDebut;

@@ -8,6 +8,7 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 public class ExperienceResponse {
+    private Long id;
     private String poste;
     private LocalDate dateDebut;
     private LocalDate dateFin;

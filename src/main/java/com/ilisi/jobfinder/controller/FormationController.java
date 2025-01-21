@@ -32,6 +32,12 @@ public class FormationController {
         List<FormationResponse> formations = formationService.getFormationsByCandidat(candidatId);
         return ResponseEntity.ok(formations); // 200 OK
     }
+    @GetMapping()
+    public ResponseEntity<List<FormationResponse>> getAllFormations() {
+        List<FormationResponse> formations = formationService.getAllFormations();
+        return ResponseEntity.ok(formations); // 200 OK
+    }
+
 
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateFormation(@PathVariable Long id, @RequestBody @Valid FormationRequest request) {

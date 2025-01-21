@@ -59,4 +59,12 @@ private final CandidatRepository candidatRepository;
        return ExperienceMapper.toExperienceResponse(experience);
 
     }
+
+    public List<ExperienceResponse> getAllExperiences() {
+        List<Experience> experiences=experienceRepository.findAll();
+        return experiences
+                .stream()
+                .map(ExperienceMapper::toExperienceResponse)
+                .collect(Collectors.toList());
+    }
 }

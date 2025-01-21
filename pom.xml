@@ -131,7 +131,7 @@
 		<dependency>
 			<groupId>org.testcontainers</groupId>
 			<artifactId>testcontainers</artifactId>
-			<scope>test</scope>
+			<version>1.19.7</version>
 		</dependency>
 		<dependency>
 			<groupId>org.testcontainers</groupId>
@@ -193,8 +193,6 @@
 			<version>9.2.0</version>
 		</dependency>
 	</dependencies>
-
-
 
 	<dependencyManagement>
 		<dependencies>
