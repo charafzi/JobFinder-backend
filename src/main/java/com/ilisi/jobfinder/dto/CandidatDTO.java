@@ -25,5 +25,6 @@ public class CandidatDTO {
     private Role role = Role.CANDIDAT;
     private String token;
     private String refreshToken;
+    private String fcmToken;
     private List<Long> cvDocumentsId;
 }
