@@ -15,6 +15,7 @@ public class ExperienceMapper {
 
     public static ExperienceResponse toExperienceResponse(Experience experience) {
         return new ExperienceResponse(
+                experience.getId(),
                 experience.getPoste(),
                 experience.getDateDebut(),
                 experience.getDateFin(),

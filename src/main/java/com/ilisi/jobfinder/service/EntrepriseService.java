@@ -11,6 +11,7 @@ import com.ilisi.jobfinder.mapper.EntrepriseMapper;
 import com.ilisi.jobfinder.model.Entreprise;
 import com.ilisi.jobfinder.model.SecteurActivite;
 import com.ilisi.jobfinder.model.User;
+import com.ilisi.jobfinder.repository.EntrepriseRepository;
 import com.ilisi.jobfinder.repository.SecteurActiviteRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
@@ -32,6 +33,7 @@ public class EntrepriseService {
     private final UserService userService;
     private final SecteurActiviteRepository secteurActiviteRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EntrepriseRepository entrepriseRepository;
     private final String uploadDir = "src/main/java/com/ilisi/jobfinder/assets/entrepriseProfilePic";
     private final Path storageLocation = Paths.get(System.getProperty("user.dir"), uploadDir);
 
@@ -42,6 +44,7 @@ public class EntrepriseService {
         Entreprise entreprise = new Entreprise();
         entreprise.setEmail(entrepriseRequest.getEmail());
         entreprise.setNom(entrepriseRequest.getNom());
+        entreprise.setAbout(entrepriseRequest.getAbout());
         entreprise.setPassword(passwordEncoder.encode(entrepriseRequest.getPassword())); // Hashage du mot de passe
         entreprise.setAdresse(AdresseMapper.toEntity(entrepriseRequest.getAdress()));
         entreprise.setTelephone(entrepriseRequest.getPhoneNumber());
@@ -154,6 +157,7 @@ public class EntrepriseService {
         return userProfileUrl;
     }
 
+
     public byte[] getProfilePictureData(Long id) throws IOException {
         User user = userService.getUserById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -177,4 +181,16 @@ public class EntrepriseService {
     public List<SecteurActivite> getSecteursActivites() {
         return this.secteurActiviteRepository.findAll().stream().toList();
     }
+    public EntrepriseDTO updateEntrepriseSecteurs(Long entrepriseId, List<Long> secteurIds) {
+        Entreprise entreprise = entrepriseRepository.findById(entrepriseId)
+                .orElseThrow(() -> new RuntimeException("Entreprise not found"));
+
+        List<SecteurActivite> secteurs = secteurActiviteRepository.findAllById(secteurIds);
+        entreprise.setSecteurActivites(secteurs);
+
+        Entreprise updatedEntreprise = entrepriseRepository.save(entreprise);
+        return EntrepriseMapper.toDto(updatedEntreprise);
+    }
+
+
 }

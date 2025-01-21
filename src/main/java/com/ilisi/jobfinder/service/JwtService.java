@@ -6,6 +6,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -19,7 +20,14 @@ import java.util.function.Function;
 @Component
 public class JwtService {
 
-    public static final String SECRET = "5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437";
+    @Value("${application.security.jwt.secret-key}")
+    private String SECRETKEY;
+
+    @Value("${application.security.jwt.expiration}")
+    private Long jwtExpiration;
+
+    @Value("${application.security.jwt.refresh-token.expiration}")
+    private Long refreshExpiration;
 
     public void validateToken(final String token) {
         Jwts.parserBuilder().setSigningKey(getSignKey()).build().parseClaimsJws(token);
@@ -47,13 +55,22 @@ public class JwtService {
         return generateToken(new HashMap<>(), email);
     }
 
+    public String generateRefreshToken(String email) {
+        return buildToken(new HashMap<>(), email,refreshExpiration);
+    }
+
     private String generateToken(Map<String, Object> extraClaims, String email) {
+        return buildToken(extraClaims, email,jwtExpiration);
+    }
+
+    private String buildToken(Map<String, Object> extraClaims, String email, long expiration) {
         return Jwts
                 .builder()
                 .setClaims(extraClaims)
                 .setSubject(email) // Utilisation de l'email comme sujet
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24)) // Expiration après 24 heures
+                // .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 *60 * 24)) // Expiration après 24 heures
+                .setExpiration(new Date(System.currentTimeMillis() + expiration)) // Expiration après 1 min
                 .signWith(getSignKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -77,7 +94,7 @@ public class JwtService {
     }*/
 
     private Key getSignKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET);
+        byte[] keyBytes = Decoders.BASE64.decode(SECRETKEY);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 

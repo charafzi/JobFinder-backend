@@ -17,6 +17,7 @@ public class FormationMapper {
 
     public static FormationResponse toFormationResponse(Formation formation) {
         return new FormationResponse(
+                formation.getId(),
                 formation.getNomEcole(),
                 formation.getNiveauEtude(),
                 formation.getDateDebut(),

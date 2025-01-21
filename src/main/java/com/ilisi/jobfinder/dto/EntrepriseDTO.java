@@ -27,4 +27,5 @@ public class EntrepriseDTO {
     @Enumerated(EnumType.STRING)
     private Role role = Role.ENTREPRISE;
     private String token;
+    private String refreshToken;
 }
