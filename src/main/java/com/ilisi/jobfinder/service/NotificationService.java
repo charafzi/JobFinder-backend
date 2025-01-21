@@ -6,11 +6,19 @@ import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import com.ilisi.jobfinder.Enum.CandidatureStatus;
 import com.ilisi.jobfinder.dto.Notification.FCMTokenRegisterRequest;
+import com.ilisi.jobfinder.dto.Notification.NotificationDTO;
+import com.ilisi.jobfinder.dto.OffreEmploi.PageResponse;
+import com.ilisi.jobfinder.mapper.NotificationMapper;
 import com.ilisi.jobfinder.model.*;
+import com.ilisi.jobfinder.repository.NotificationRepository;
 import com.ilisi.jobfinder.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -21,8 +29,9 @@ import java.util.Map;
 @AllArgsConstructor
 @Log4j2
 public class NotificationService {
-    private FirebaseMessaging firebaseMessaging;
-    private UserRepository userRepository;
+    private final FirebaseMessaging firebaseMessaging;
+    private final UserRepository userRepository;
+    private final NotificationRepository notificationRepository;
 
     public void sendNotificationPostulationCandidatByEntreprise(OffreEmploi offre){
         User user = this.userRepository.findById(offre.getEntreprise().getId())
@@ -32,13 +41,13 @@ public class NotificationService {
         String contenu = "You have received a new application for the job offer titled :" + offre.getTitre() + ". Check your job offers for more details.";
 
         // save notification for history
-        this.saveNotificationByUser(user,titre,contenu);
+        com.ilisi.jobfinder.model.Notification saved =this.saveNotificationByUser(user,titre,contenu);
 
         System.out.println("I willl send notif to "+user.getEmail());
 
         if(user.getFcmToken() != null){
             //send notification by FCM
-            if(!this.sendNotificationByFCMToken(user.getFcmToken(),titre,contenu)){
+            if(!this.sendNotificationByFCMToken(user.getFcmToken(),saved.getId(),titre,contenu)){
                 log.error("Error while sending notification to Entreprise");
             }
         }
@@ -63,19 +72,19 @@ public class NotificationService {
 
 
         // save notification for history
-        this.saveNotificationByUser(user,titre,contenu);
+        com.ilisi.jobfinder.model.Notification saved = this.saveNotificationByUser(user,titre,contenu);
 
         System.out.println("I willl send notif to "+user.getEmail());
 
         if(user.getFcmToken() != null){
             //send notification by FCM
-            if(!this.sendNotificationByFCMToken(user.getFcmToken(),titre,contenu)){
+            if(!this.sendNotificationByFCMToken(user.getFcmToken(),saved.getId(),titre,contenu)){
                 log.error("Error while sending notification to Entreprise");
             }
         }
     }
 
-    public boolean sendNotificationByFCMToken(String fcmToken,String title,String body){
+    public boolean sendNotificationByFCMToken(String fcmToken,Long id,String title,String body){
         Notification notification = Notification
                 .builder()
                 .setTitle(title)
@@ -83,6 +92,8 @@ public class NotificationService {
                 .build();
 
         Map<String,String> map = new HashMap<>();
+        map.put("id",String.valueOf(id));
+
         Message message = Message
                 .builder()
                 .setToken(fcmToken)
@@ -122,14 +133,14 @@ public class NotificationService {
         }
     }
 
-    private void saveNotificationByUser(User user, String titre, String contenue){
+    private com.ilisi.jobfinder.model.Notification saveNotificationByUser(User user, String titre, String contenue){
         com.ilisi.jobfinder.model.Notification notification = new com.ilisi.jobfinder.model.Notification();
         notification.setTitre(titre);
         notification.setContenu(contenue);
         notification.setDateEnvoi(LocalDateTime.now());
         notification.setVue(false);
-        user.getNotifications().add(notification);
-        userRepository.save(user);
+        notification.setUser(user);
+        return notificationRepository.save(notification);
     }
 
 
@@ -141,5 +152,46 @@ public class NotificationService {
         user.setFcmToken(request.getFcmToken());
         this.userRepository.save(user);
         return "FCM token registered successfully !";
+    }
+
+    public PageResponse<NotificationDTO> getNotificationsByUser(Long userId, int page, int size) {
+        User user = this.userRepository.findById(userId)
+                .orElseThrow(()->new EntityNotFoundException("User not found"));
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<com.ilisi.jobfinder.model.Notification> notificationsPage = this.notificationRepository.findNotificationByUserIdOrderByDateEnvoiDesc(userId,pageable);
+
+        Page<NotificationDTO> dtoPage = notificationsPage.map(NotificationMapper::toNotificationDTO);
+
+        return PageResponse.of(dtoPage);
+
+    }
+
+    public String markAsSeen(Long id) {
+        com.ilisi.jobfinder.model.Notification notification = this.notificationRepository.findById(id)
+                .orElseThrow(()->new EntityNotFoundException("Notification not found"));
+
+        notification.setVue(true);
+        this.notificationRepository.save(notification);
+        return "Notification marked seen successfully !";
+    }
+
+    public String deleteNotificationById(Long id) {
+        com.ilisi.jobfinder.model.Notification notification = this.notificationRepository.findById(id)
+                .orElseThrow(()->new EntityNotFoundException("Notification not found"));
+        this.notificationRepository.delete(notification);
+        return "Notification deleted successfully";
+    }
+
+    public long unreadCountByUserId(Long userId) {
+        User user = this.userRepository.findById(userId)
+                .orElseThrow(()->new EntityNotFoundException("User not found"));
+
+        if(user.getNotifications()== null || user.getNotifications().isEmpty()){
+            return 0;
+        }
+        long unreadCount = user.getNotifications().stream().filter(notification -> notification.isVue()==false).count();
+        return unreadCount;
     }
 }
