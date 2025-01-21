@@ -27,4 +27,6 @@ public interface OffreEmploiRepository extends JpaRepository<OffreEmploi,Long>, 
     List<OffreEmploi> findOffresWithinRadius(Point p,double radius);
 
     Page<OffreEmploi> findByEntrepriseId(Long entrepriseId, Pageable pageable);
+
+    int countByEntrepriseId(Long entrepriseId);
 }

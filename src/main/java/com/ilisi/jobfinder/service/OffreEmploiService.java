@@ -138,6 +138,10 @@ private final UserRepository userRepository;
         return dtos;
     }
 
+    public int getNombreOffresParEntreprise(Long entrepriseId){
+        return offremploiRepository.countByEntrepriseId(entrepriseId);
+    }
+
     private String calculateTimeAgo(LocalDateTime datePublication) {
         Duration duration = Duration.between(datePublication, LocalDateTime.now());
         if (duration.toMinutes() < 60) {

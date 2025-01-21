@@ -142,6 +142,12 @@ public class OffreController {
             return ResponseEntity.internalServerError().body(null);
         }
     }
+
+    @GetMapping("/{entrepriseId}/count")
+    public ResponseEntity<Integer> getNombreOffresParEntreprise(@PathVariable Long entrepriseId) {
+        int nombreOffres = offreEmploiService.getNombreOffresParEntreprise(entrepriseId);
+        return ResponseEntity.ok(nombreOffres);
+    }
     /******************* Méthodes Socket.IO ********************/
 
     /// Gestionnaire d'événement de connexion d'un client
