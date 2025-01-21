@@ -20,9 +20,9 @@ import java.io.IOException;
 @AllArgsConstructor
 public class CandidatController {
     private final CandidatService candidatService;
-    @PostMapping("/profile-picture/{email}")
+    @PostMapping("/profile-picture/{id}")
     public ResponseEntity<String> saveUserPicture(
-            @PathVariable String email,
+            @PathVariable Long id,
             @RequestParam("file") MultipartFile file){
 
 
@@ -37,18 +37,18 @@ public class CandidatController {
         }
 
         try {
-            String imageUrl = candidatService.uploadProfilePicture(email,file);
+            String imageUrl = candidatService.uploadProfilePicture(id,file);
             return ResponseEntity.ok(imageUrl);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload image: " + e.getMessage());
         }
     }
 
-    @GetMapping("/profile-picture/{email}")
-    public ResponseEntity<byte[]> getProfilePicture(@PathVariable String email) {
+    @GetMapping("/profile-picture/{id}")
+    public ResponseEntity<byte[]> getProfilePicture(@PathVariable Long id) {
         try {
             // Get the binary data of the image
-            byte[] imageData = candidatService.getProfilePictureData(email);
+            byte[] imageData = candidatService.getProfilePictureData(id);
 
             // Check if the image data exists
             if (imageData != null) {

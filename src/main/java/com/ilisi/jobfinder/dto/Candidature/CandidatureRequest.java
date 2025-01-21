@@ -18,5 +18,6 @@ public class CandidatureRequest {
     private Long cvId;                      // Pour sélectionner un CV existant
     private MultipartFile newCv;            // Pour uploader un nouveau CV
     private MultipartFile lettreMotivation;  // Pour la lettre de motivation
+    private String reponse;
 
 }
