@@ -34,6 +34,7 @@ public class CandidatureService {
     private final OffreEmploiRepository offreEmploiRepository;
     private final CandidatureRepository candidatureRepository;
     private final DocumentService documentService;
+    private final NotificationService notificationService;
 
 
     public void postuler(CandidatureRequest request) throws IOException, OffreDejaPostule,EntityNotFoundException {
@@ -92,6 +93,9 @@ public class CandidatureService {
         }
         candidature.setStatus(CandidatureStatus.ENVOYEE);
         candidatureRepository.save(candidature);
+
+        //send notification for entreprise
+        this.notificationService.sendNotificationPostulationCandidatByEntreprise(offre);
 
     }
 
@@ -168,6 +172,9 @@ public class CandidatureService {
 
         candid.setStatus(candidatureStatus);
         candidatureRepository.save(candid);
+
+        //send notification to candidat
+        this.notificationService.sendNotificationStatusChangedCandidature(candidature.get(),candidatureStatus);
     }
 
     public boolean checkIfUserApplied(Long userId, Long offreId)  throws EntityNotFoundException{

@@ -29,8 +29,11 @@ public class User implements UserDetails {
     private String photoProfile;
     private String telephone;
     private String googleId;
+    private String fcmToken;
     @Enumerated(EnumType.STRING)
     private Role role;
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<Notification> notifications;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

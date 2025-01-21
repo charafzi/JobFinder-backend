@@ -24,6 +24,7 @@ public class CandidatMapper {
                 .phoneNumber(entity.getTelephone())
                 .role(Role.CANDIDAT)
                 .cvDocumentsId(cvIds)
+                .fcmToken(entity.getFcmToken())
                 .build();
     }
 }
