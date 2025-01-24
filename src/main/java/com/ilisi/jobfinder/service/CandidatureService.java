@@ -132,19 +132,19 @@ public class CandidatureService {
         return PageResponse.of(dtoPage);
     }
 
-    public void deleteCandidature(CandidatureDeleteRequest request) throws EntityNotFoundException {
+    public void deleteCandidature(Long userId,Long offreId) throws EntityNotFoundException {
         // Vérifier si le candidat existe
-        Candidat candidat = candidatRepository.findByEmail(request.getEmail())
+        Candidat candidat = candidatRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("Candidat introuvable."));
 
         Candidature candidature = candidat.getCandidatures()
                 .stream()
-                .filter(candid -> candid.getOffreEmploi().getId().equals(request.getOffreId()))
+                .filter(candid -> candid.getOffreEmploi().getId().equals(offreId))
                 .findFirst()
                 .orElse(null);
 
         if(candidature == null){
-            throw new EntityNotFoundException("Candidature introuvable pour offre ="+request.getOffreId());
+            throw new EntityNotFoundException("Candidature introuvable pour offre ="+offreId);
         }
 
         candidat.getCandidatures().remove(candidature);

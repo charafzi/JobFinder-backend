@@ -88,12 +88,13 @@ public class CandidatureController {
         }
     }
 
-    @DeleteMapping("/")
+    @DeleteMapping("/{userId}/{offreId}")
     public ResponseEntity<?> deleteCandidatureByUser(
-            @RequestBody CandidatureDeleteRequest candidatureDeleteRequest
+            @PathVariable Long userId,
+            @PathVariable Long offreId
             ){
         try {
-            this.candidatureService.deleteCandidature(candidatureDeleteRequest);
+            this.candidatureService.deleteCandidature(userId,offreId);
             return ResponseEntity.noContent().build();
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());

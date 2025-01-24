@@ -4,10 +4,12 @@ import com.ilisi.jobfinder.Enum.DocumentType;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class CandidatureRequest {
     @NotNull(message = "L'email du candidat est obligatoire.")
     private String email;
