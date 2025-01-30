@@ -49,6 +49,9 @@ public class EntrepriseService {
         entreprise.setAdresse(AdresseMapper.toEntity(entrepriseRequest.getAdress()));
         entreprise.setTelephone(entrepriseRequest.getPhoneNumber());
         entreprise.setRole(Role.ENTREPRISE);
+        // Récupérer les secteurs d'activité par leurs IDs
+        List<SecteurActivite> secteurs = secteurActiviteRepository.findAllById(entrepriseRequest.getSecteurIds());
+        entreprise.setSecteurActivites(secteurs);
 
         return userService.saveUser(entreprise);
     }
