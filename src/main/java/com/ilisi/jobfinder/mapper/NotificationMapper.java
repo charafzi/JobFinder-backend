@@ -11,6 +11,7 @@ public class NotificationMapper {
                 .body(entity.getContenu())
                 .seen(entity.isVue())
                 .sentDate(entity.getDateEnvoi())
+                .data(entity.getData())
                 .build();
     }
 }
