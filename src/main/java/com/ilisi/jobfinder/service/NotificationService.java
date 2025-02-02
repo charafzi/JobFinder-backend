@@ -41,13 +41,15 @@ public class NotificationService {
         String contenu = "You have received a new application for the job offer titled :" + offre.getTitre() + ". Check your job offers for more details.";
 
         // save notification for history
-        com.ilisi.jobfinder.model.Notification saved =this.saveNotificationByUser(user,titre,contenu);
+        Map<String, String> data = new HashMap<>();
+        data.put("offreId", String.valueOf(offre.getId()));
+        com.ilisi.jobfinder.model.Notification saved = this.saveNotificationByUser(user, titre, contenu, data);
 
         System.out.println("I willl send notif to "+user.getEmail());
 
         if(user.getFcmToken() != null){
             //send notification by FCM
-            if(!this.sendNotificationByFCMToken(user.getFcmToken(),saved.getId(),titre,contenu)){
+            if(!this.sendNotificationByFCMToken(user.getFcmToken(),saved.getId(),titre,contenu, data)){
                 log.error("Error while sending notification to Entreprise");
             }
         }
@@ -70,16 +72,17 @@ public class NotificationService {
 
         String contenu= "Your application to "+candidature.getOffreEmploi().getPoste()+" for "+candidature.getOffreEmploi().getEntreprise().getNom()+" has been "+statusString+". Check your applications for more details.";
 
-
         // save notification for history
-        com.ilisi.jobfinder.model.Notification saved = this.saveNotificationByUser(user,titre,contenu);
+        Map<String, String> data = new HashMap<>();
+        data.put("offreId", String.valueOf(candidature.getOffreEmploi().getId()));
+        com.ilisi.jobfinder.model.Notification saved = this.saveNotificationByUser(user, titre, contenu, data);
 
         System.out.println("I willl send notif to "+user.getEmail());
 
         if(user.getFcmToken() != null){
             //send notification by FCM
-            if(!this.sendNotificationByFCMToken(user.getFcmToken(),saved.getId(),titre,contenu)){
-                log.error("Error while sending notification to Entreprise");
+            if(!this.sendNotificationByFCMToken(user.getFcmToken(),saved.getId(),titre,contenu, data)){
+                log.error("Error while sending notification to Candidat");
             }
         }
     }
@@ -133,17 +136,44 @@ public class NotificationService {
         }
     }
 
-    private com.ilisi.jobfinder.model.Notification saveNotificationByUser(User user, String titre, String contenue){
+    private com.ilisi.jobfinder.model.Notification saveNotificationByUser(User user, String titre, String contenue, Map<String, String> data){
         com.ilisi.jobfinder.model.Notification notification = new com.ilisi.jobfinder.model.Notification();
+        notification.setUser(user);
         notification.setTitre(titre);
         notification.setContenu(contenue);
         notification.setDateEnvoi(LocalDateTime.now());
         notification.setVue(false);
-        notification.setUser(user);
+        notification.setData(data);
         return notificationRepository.save(notification);
     }
 
+    public boolean sendNotificationByFCMToken(String fcmToken, Long id, String title, String body, Map<String, String> data){
+        Notification notification = Notification
+                .builder()
+                .setTitle(title)
+                .setBody(body)
+                .build();
 
+        if (data == null) {
+            data = new HashMap<>();
+        }
+        data.put("id", String.valueOf(id));
+
+        Message message = Message
+                .builder()
+                .setToken(fcmToken)
+                .setNotification(notification)
+                .putAllData(data)
+                .build();
+
+        try {
+            firebaseMessaging.send(message);
+            return true;
+        }catch (FirebaseMessagingException e){
+            e.printStackTrace();
+            return false;
+        }
+    }
 
     public String registerFCMToken(FCMTokenRegisterRequest request) throws EntityNotFoundException {
         User user = this.userRepository.findById(request.getUserId())

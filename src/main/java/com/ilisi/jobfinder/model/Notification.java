@@ -4,8 +4,11 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @Entity
 @Data
@@ -17,6 +20,9 @@ public class Notification {
  private Long id;
  private String titre;
  private String contenu;
+ @JdbcTypeCode(SqlTypes.JSON)
+ @Column(columnDefinition = "jsonb")
+ private Map<String,String> data;
  private LocalDateTime dateEnvoi;
  private boolean vue;
  @ManyToOne
