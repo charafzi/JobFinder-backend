@@ -2,6 +2,8 @@ package com.ilisi.jobfinder.service;
 
 import com.ilisi.jobfinder.Enum.CandidatureStatus;
 import com.ilisi.jobfinder.Enum.DocumentType;
+import com.ilisi.jobfinder.Enum.SortBy;
+import com.ilisi.jobfinder.Enum.SortDirection;
 import com.ilisi.jobfinder.dto.Candidature.CandidatureCandidatDTO;
 import com.ilisi.jobfinder.dto.Candidature.CandidatureDeleteRequest;
 import com.ilisi.jobfinder.dto.Candidature.CandidatureRequest;
@@ -20,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -116,9 +119,10 @@ public class CandidatureService {
                 .orElseThrow(() -> new EntityNotFoundException("Candidat introuvable."));
 
         log.info("Candidat trouvé avec ID: {}", candidat.getId());
+        Sort sort = Sort.by(Sort.Direction.valueOf(SortDirection.DESC.toString()), SortBy.CANDIDATURE_DATE.getField());
 
         // Créer un objet Pageable pour la pagination
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size, sort);
         log.info("Recherche des candidatures pour le candidat avec ID: {} et page: {}, taille: {}", candidat.getId(), page, size);
 
         // Récupérer les candidatures paginées
