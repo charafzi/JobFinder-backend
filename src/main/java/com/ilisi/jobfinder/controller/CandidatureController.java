@@ -2,6 +2,8 @@ package com.ilisi.jobfinder.controller;
 
 
 import com.ilisi.jobfinder.Enum.CandidatureStatus;
+import com.ilisi.jobfinder.Enum.SortBy;
+import com.ilisi.jobfinder.Enum.SortDirection;
 import com.ilisi.jobfinder.dto.Candidature.CandidatureCandidatDTO;
 import com.ilisi.jobfinder.dto.Candidature.CandidatureDeleteRequest;
 import com.ilisi.jobfinder.dto.Candidature.CandidatureRequest;
@@ -79,7 +81,7 @@ public class CandidatureController {
             @RequestParam Long id,
             @RequestParam int page,
             @RequestParam int size
-    ){
+            ){
         try {
             PageResponse<CandidatureCandidatDTO> result= this.candidatureService.getAllCandidaturesByUser(id,page,size);
             return ResponseEntity.ok().body(result);
