@@ -17,11 +17,9 @@ public class FirebaseConfig {
     public FirebaseMessaging firebaseMessaging() throws IOException {
         GoogleCredentials credentials = GoogleCredentials
                 .fromStream(new ClassPathResource("firebase-service-account.json").getInputStream());
-
         FirebaseOptions options = FirebaseOptions.builder()
                 .setCredentials(credentials)
                 .build();
-
         FirebaseApp app = FirebaseApp.initializeApp(options,"JobFinder-backend");
         return FirebaseMessaging.getInstance(app);
 

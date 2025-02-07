@@ -30,7 +30,8 @@ public class CandidatureController {
     private final CandidatureService candidatureService;
 
     @PostMapping(value = "/postuler", consumes = "multipart/form-data")
-    public ResponseEntity<String> postulerCandidature(@ModelAttribute @Valid CandidatureRequest request) {
+    public ResponseEntity<String> postulerCandidature(@ModelAttribute @Valid CandidatureRequest request)
+    {
         try {
             candidatureService.postuler(request);
             return ResponseEntity.ok("Candidature soumise avec succès !");

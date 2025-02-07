@@ -1,6 +1,7 @@
 package com.ilisi.jobfinder.controller;
 
 import com.ilisi.jobfinder.dto.Auth.*;
+import com.ilisi.jobfinder.dto.UserDTO;
 import com.ilisi.jobfinder.exceptions.EmailAlreadyExists;
 import com.ilisi.jobfinder.exceptions.EmailNotExist;
 import com.ilisi.jobfinder.exceptions.SamePasswordException;
@@ -112,10 +113,12 @@ public class AuthController {
            return ResponseEntity.badRequest().body(null);
        }
    }
-
    @PostMapping("/refresh-token")
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         this.authService.refreshToken(request,response);
     }
-  
+    @PostMapping("/authenticateWithGoogle")
+    public ResponseEntity<UserDTO> authenticateWithGoogle(@RequestBody Auth0Request auth0Request) {
+        return ResponseEntity.ok(authService.authenticateWithGoogle(auth0Request));
+    }
 }

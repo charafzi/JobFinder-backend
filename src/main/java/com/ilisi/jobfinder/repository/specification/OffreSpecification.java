@@ -15,7 +15,6 @@ import java.util.List;
 
 @Component
 public class OffreSpecification {
-
     public static Specification<OffreEmploi> buildSpecification(OffreSearchRequestDTO searchDTO) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
@@ -44,7 +43,6 @@ public class OffreSpecification {
             if (searchDTO.getSalaryMax() != null) {
                 predicates.add(cb.lessThanOrEqualTo(root.get("salaire"), searchDTO.getSalaryMax()));
             }
-
             return predicates.isEmpty() ? cb.conjunction() : cb.and(predicates.toArray(new Predicate[0]));
         };
     }

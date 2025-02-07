@@ -46,7 +46,7 @@ public class CandidatController {
 
     @GetMapping("/profile-picture/{id}")
     public ResponseEntity<byte[]> getProfilePicture(@PathVariable Long id) {
-        try {
+        try{
             // Get the binary data of the image
             byte[] imageData = candidatService.getProfilePictureData(id);
 

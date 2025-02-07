@@ -17,12 +17,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @AllArgsConstructor
 public class ApplicationConfig {
     private final UserRepository userRepository;
-
     @Bean
     public UserDetailsService userDetailsService(){
         return username -> userRepository.findByEmail(username).orElseThrow(()-> new UsernameNotFoundException("Email not found"));
     }
-
     @Bean
     public AuthenticationProvider authenticationProvider(PasswordEncoder passwordEncoder){
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
@@ -30,7 +28,6 @@ public class ApplicationConfig {
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }
-
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();

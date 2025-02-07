@@ -13,33 +13,15 @@ import lombok.NoArgsConstructor;
 public class Auth0Request {
     private String sub;
     private String name;
+    private String picture;
     private String email;
     private boolean email_verified;
     private Role role;
 
-    public Auth0Request(String googleId, String email, String fullName, String profilePicture,Role role) {
-        this.setSub(googleId);
-        this.setEmail(email);
-        this.setName(fullName);
-        this.setRole(role);
+    public Auth0Request(String googleId, String email, String profilePicture, Role role) {
+        this.sub = googleId;
+        this.email = email;
+        this.picture = profilePicture;
+        this.role = role;
     }
-//    public User toUser() {
-//        if (this.role == Role.ENTREPRISE) {
-//            return Entreprise.builder()
-//                    .googleId(this.sub)
-//                    .email(this.email)
-//                    .nom(this.name)
-//                    .role(this.role)
-//                    .build();
-//        } else {
-//            return Candidat.builder()
-//                    .googleId(this.sub)
-//                    .email(this.email)
-//                    .nom(this.name)
-//                    .role(this.role)
-//                    .build();
-//        }
-//    }
-
-
 }

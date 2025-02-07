@@ -5,7 +5,6 @@ import com.ilisi.jobfinder.dto.EntrepriseDTO;
 import com.ilisi.jobfinder.model.Entreprise;
 
 public class EntrepriseMapper {
-
     public static EntrepriseDTO toDto(Entreprise entity){
         return EntrepriseDTO.builder()
                 .id(entity.getId())

@@ -96,7 +96,7 @@ public class OffreController {
                     .map(OffreMapper::toDto)
                     .map(ResponseEntity::ok)
                     .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build()); // 404 Not Found
-        } catch (Exception e) {
+        }catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // 500 Internal Server Error
         }
     }
@@ -111,7 +111,6 @@ public class OffreController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // 404 Not Found
         }
     }
-
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteOffre(@PathVariable Long id) {
         try {
@@ -132,20 +131,17 @@ public class OffreController {
         }
     }
 
-
     /******************* Méthodes Socket.IO ********************/
-
     /// Gestionnaire d'événement de connexion d'un client
     public ConnectListener onUserConnectWithSocket = (client) -> {
         // Ajout automatique du client à la room des offres lors de la connexion
         client.joinRoom(OFFRES_ROOM);
         log.info("Client {} connected and joined offers room", client.getSessionId());
     };
-
     /// Gestionnaire d'événement de déconnexion d'un client
     public DisconnectListener onUserDisconnectWithSocket = (client) -> {
         // Retrait du client de la room des offres lors de la déconnexion
         client.leaveRoom(OFFRES_ROOM);
-        log.info("Client {} disconnected and left offers room", client.getSessionId());
+        log.info("Client {} disconnected and left offers room",client.getSessionId());
     };
 }

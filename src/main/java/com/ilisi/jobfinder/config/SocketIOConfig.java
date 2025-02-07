@@ -3,12 +3,12 @@ package com.ilisi.jobfinder.config;
 import com.corundumstudio.socketio.Configuration;
 import com.corundumstudio.socketio.SocketIOClient;
 import com.corundumstudio.socketio.SocketIOServer;
-import com.corundumstudio.socketio.Transport;
 import com.corundumstudio.socketio.listener.ConnectListener;
 import com.corundumstudio.socketio.listener.DisconnectListener;
 import com.corundumstudio.socketio.protocol.JacksonJsonSupport;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.annotation.PreDestroy;
+import jakarta.mail.Transport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -56,13 +56,12 @@ public class SocketIOConfig {
         config.setOrigin("*");
         config.setAllowCustomRequests(true);
         config.setUpgradeTimeout(10000);
-        config.setTransports(Transport.WEBSOCKET, Transport.POLLING);
+//        config.setTransports(Transport.WEBSOCKET, Transport.POLLING);
         
         config.setJsonSupport(new JacksonJsonSupport(new JavaTimeModule()));
 
         server = new SocketIOServer(config);
         server.start();
-
         // Écouteur pour les connexions de clients
         server.addConnectListener(new ConnectListener() {
             @Override
@@ -70,7 +69,6 @@ public class SocketIOConfig {
                 logger.info("New user connected with socket " + client.getSessionId());
             }
         });
-
         // Écouteur pour les déconnexions de clients
         server.addDisconnectListener(new DisconnectListener() {
             @Override

@@ -1,10 +1,12 @@
 package com.ilisi.jobfinder.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ilisi.jobfinder.Enum.Role;
 import com.ilisi.jobfinder.controller.AuthController;
 import com.ilisi.jobfinder.dto.Auth.*;
 import com.ilisi.jobfinder.dto.CandidatDTO;
 import com.ilisi.jobfinder.dto.EntrepriseDTO;
+import com.ilisi.jobfinder.dto.UserDTO;
 import com.ilisi.jobfinder.exceptions.EmailAlreadyExists;
 import com.ilisi.jobfinder.exceptions.EmailNotExist;
 import com.ilisi.jobfinder.exceptions.SamePasswordException;
@@ -20,6 +22,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpHeaders;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
@@ -46,12 +49,12 @@ public class AuthService {
     private final UserRepository userRepository;
     private final  PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    @Lazy
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
     private final CandidatService candidatService;
     private final EntrepriseService entrepriseService;
     private static final Logger log = LoggerFactory.getLogger(AuthController.class);
-
 
     public void validateToken(String token) {
         try {
@@ -98,8 +101,8 @@ public class AuthService {
         return passwordEncoder.matches(loginRequest.getPassword(), user.getPassword());
     }
 
-
     public Object authenticate(LoginRequest loginRequest) throws UsernameNotFoundException, BadCredentialsException {
+        //chercher ce user dans bdd
         User user = userRepository.findByEmail(loginRequest.getEmail()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
@@ -117,32 +120,28 @@ public class AuthService {
             candidatDTO.setRefreshToken(refreshToken);
             return candidatDTO;
         }
-
         throw new IllegalStateException("Unknown user type");
     }
-
-
     public User registerCandidat(RegisterCandidatRequest candidatRequest) throws EmailAlreadyExists {
         return candidatService.registerCandidat(candidatRequest);
     }
     public User registerEntreprise(RegisterEntrepriseRequest entrepriseRequest) throws EmailAlreadyExists{
         return entrepriseService.registerEntreprise(entrepriseRequest);
     }
-
-    public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException
+    {
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return;
         }
-
         final String refreshToken = authHeader.substring(7);
         final String userEmail = jwtService.extractEmail(refreshToken);
-
-        if (userEmail != null) {
+        if (userEmail != null)
+        {
             User user = this.userRepository.findByEmail(userEmail)
                     .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-            
-            if (jwtService.isTokenValid(refreshToken, user)) {
+            if (jwtService.isTokenValid(refreshToken, user))
+            {
                 String accessToken = jwtService.generateToken(user.getEmail());
                 AuthenticationResponse authResponse = AuthenticationResponse.builder()
                         .accessToken(accessToken)
@@ -153,39 +152,42 @@ public class AuthService {
             }
         }
     }
-//    public UserDTO authenticateWithGoogle(Auth0Request auth0Request) {
-//        Optional<User> userOpt;
-//        try {
-//            // Recherche de l'utilisateur existant par Google ID
-//            userOpt = userService.getUserbyGoogleId(auth0Request.getSub());
-//        } catch (Exception e) {
-//            System.err.println("Erreur lors de la recherche de l'utilisateur : " + e.getMessage());
-//            throw e;
-//        }
-//
-//        User user;
-//        if (userOpt.isPresent()) {
-//            // Si l'utilisateur existe déjà
-//            user = userOpt.get();
-//        } else {
-//            // Si l'utilisateur n'existe pas, en créer un nouveau
-//            user = auth0Request.toUser();  // Utilisation de la méthode toUser() pour créer l'utilisateur
-//
-//            // Sauvegarder l'utilisateur
-//            user = userService.createUser(user);
-//        }
-//
-//        System.out.println("Utilisateur authentifié ou créé : " + user);
-//
-//        // Génération du token JWT
-//        String token = jwtService.generateToken(user.getEmail());
-//
-//        // Construire et retourner le UserDTO
-//        return UserDTO.builder()
-//                .id(user.getId())
-//                .email(user.getEmail())
-//                .token(token)
-//                .role(user.getRole())
-//                .build();
-//    }
+    public UserDTO authenticateWithGoogle(Auth0Request auth0Request) {
+        Optional<User> userOpt;
+        try {
+            // Recherche de l'utilisateur existant par Google ID
+            userOpt = userService.getUserbyGoogleId(auth0Request.getSub());
+        } catch (Exception e) {
+            System.err.println("Erreur lors de la recherche de l'utilisateur : " + e.getMessage());
+            throw e;
+        }
+        User user;
+        if (userOpt.isPresent()) {
+            // L'utilisateur existe déjà
+            user = userOpt.get();
+        } else {
+            if (auth0Request.getRole() == Role.CANDIDAT) {
+                user = new Candidat();
+            } else {
+                user = new Entreprise();
+            }
+            user.setGoogleId(auth0Request.getSub());
+            user.setEmail(auth0Request.getEmail());
+            user.setPhotoProfile(auth0Request.getPicture());
+            user.setRole(auth0Request.getRole());
+            user = userService.saveUser(user);
+        }
+        System.out.println("Utilisateur authentifié ou créé : " + user);
+        // Génération du token JWT
+        String token = jwtService.generateToken(user.getEmail());
+
+        // Retourne le UserDTO avec le rôle
+        return UserDTO.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .token(token)
+                .googleId(auth0Request.getSub())
+                .role(auth0Request.getRole())
+                .build();
+    }
 }

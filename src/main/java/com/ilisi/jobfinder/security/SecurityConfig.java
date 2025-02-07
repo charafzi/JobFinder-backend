@@ -1,8 +1,10 @@
 package com.ilisi.jobfinder.security;
 
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -18,6 +20,9 @@ import org.springframework.web.cors.CorsConfiguration;
 public class SecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
+    @Autowired
+    @Lazy
+    private OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -25,13 +30,14 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)// Disables CSRF protection to bypass errors during developement
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/api/auth/**","/api/offre/**","/api/entreprise/**","/api/candidat/**","/socket.io/**", "/ws/**","/api/formation/**","/api/experience/**","/api/candidature/**","/api/competences/**","/api/langues/**","/api/abouts/**","/api/notifications/**").permitAll() // Autoriser l'accès public/anonyme
-                        .anyRequest().authenticated() // Authentication required for all requests
+                        .anyRequest().authenticated() //Authentication required for all requests
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .oauth2Login(oauth2 -> oauth2
+                        .successHandler(oAuth2LoginSuccessHandler))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-
         // CORS configuration
         http.cors(cors -> {
             cors.configurationSource(request -> {
@@ -43,7 +49,6 @@ public class SecurityConfig {
                 return config;
             });
         });
-
         // Allow WebSocket handshake requests
         http.headers(headers -> headers
                 .frameOptions(frameOptions -> frameOptions.disable())

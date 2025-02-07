@@ -16,7 +16,6 @@ services:
       - app-network
     volumes:
       - /home/synapios/ilisilab/pg-data:/var/lib/postgresql/data
-
   # PGAdmin4
   pgadmin:
     image: dpage/pgadmin4
@@ -44,12 +43,6 @@ services:
     volumes:
       - /home/synapios/ilisilab/redis-data:/data
     command: [ "redis-server", "--appendonly", "yes" ]
-
 networks:
   app-network:
     driver: bridge
-
-#volumes:
-#  pg-data:
-#  pgadmin-data:
-#  redis-data:

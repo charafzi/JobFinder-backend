@@ -37,7 +37,8 @@ public class CandidatureService {
     private final DocumentService documentService;
 
 
-    public void postuler(CandidatureRequest request) throws IOException, OffreDejaPostule,EntityNotFoundException {
+    public void postuler(CandidatureRequest request) throws IOException, OffreDejaPostule,EntityNotFoundException
+    {
         // Vérifier si le candidat existe
         Candidat candidat = candidatRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new EntityNotFoundException("Candidat introuvable."));
@@ -46,7 +47,7 @@ public class CandidatureService {
         OffreEmploi offre = offreEmploiRepository.findById(request.getOffreId())
                 .orElseThrow(() -> new EntityNotFoundException("Offre introuvable."));
 
-        // Check if already applied - using the composite key
+        //Check if already applied-using the composite key
         CandidatureId candidatureId = new CandidatureId();
         candidatureId.setCandidatId(candidat.getId());
         candidatureId.setOffreEmploiId(request.getOffreId());
@@ -54,21 +55,17 @@ public class CandidatureService {
         if (candidatureRepository.findById(candidatureId).isPresent()) {
             throw new OffreDejaPostule();
         }
-
-
         Candidature candidature = new Candidature();
         candidature.setId(candidatureId);
         candidature.setDateCandidature(LocalDateTime.now());
         candidature.setOffreEmploi(offre);
         candidature.setCandidat(candidat);
-        if(offre.getQuestion() != null){
+        if(offre.getQuestion() != null) {
             if(request.getReponse() == null){
                 throw new AucuneReponsePourQuestion();
             }
         }
-
         candidature.setReponse(request.getReponse());
-
 
         //Voir si un nouveau CV est téléchargée
         if(request.getNewCv() != null){
@@ -93,26 +90,22 @@ public class CandidatureService {
         }
         candidature.setStatus(CandidatureStatus.ENVOYEE);
         candidatureRepository.save(candidature);
-
     }
-
 
     public List<CandidatureDTO> getAllCandidaturesByOffre(Long offreId) {
         // Vérifier si l'offre existe
         OffreEmploi offre = offreEmploiRepository.findById(offreId)
-                .orElseThrow(() -> new EntityNotFoundException("Offre introuvable."));
+                .orElseThrow(() -> new EntityNotFoundException("Offre introuvable"));
 
         List<Candidature> candidatures = this.candidatureRepository.findCandidaturesByOffreEmploiId(offreId);
         return candidatures.stream().map(CandidatureMapper::toDto).toList();
     }
-
     public PageResponse<CandidatureCandidatDTO> getAllCandidaturesByUser(Long id, int page, int size) throws EntityNotFoundException {
         // Vérifier si le candidat existe
         Candidat candidat = candidatRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Candidat introuvable."));
 
         log.info("Candidat trouvé avec ID: {}", candidat.getId());
-
         // Créer un objet Pageable pour la pagination
         Pageable pageable = PageRequest.of(page, size);
         log.info("Recherche des candidatures pour le candidat avec ID: {} et page: {}, taille: {}", candidat.getId(), page, size);
@@ -174,11 +167,9 @@ public class CandidatureService {
         // Vérifier si le candidat existe
         Candidat candidat = candidatRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("Candidat introuvable."));
-
         // Vérifier si l'offre existe
         OffreEmploi offre = offreEmploiRepository.findById(offreId)
                 .orElseThrow(() -> new EntityNotFoundException("Offre introuvable."));
-
         // Check if already applied - using the composite key
         CandidatureId candidatureId = new CandidatureId();
         candidatureId.setCandidatId(userId);
